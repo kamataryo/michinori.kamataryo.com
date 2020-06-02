@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css"
+      type="text/css"
+    />
+    <title>かんたんトレイルシェアサービス</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <a class="forkme" href="https://github.com/geolonia/trail-sharing"
+      ><img
+        width="149"
+        height="149"
+        src="https://github.blog/wp-content/uploads/2008/12/forkme_left_red_aa0000.png?resize=149%2C149"
+        class="attachment-full size-full"
+        alt="Fork me on GitHub"
+        data-recalc-dims="1"
+    /></a>
+
+    <p class="credit">かんたんトレイルシェアサービス</p>
+
+    <div id="form">
+      <input id="url" type="text" />
+      <button id="clip" data-clipboard-target="#url">
+        Copy
+      </button>
+      <p class="copyright">
+        <a href="https://blog.geolonia.com/2020/06/02/trail-sharing.html"
+          >Geolonia Inc.</a
+        >
+      </p>
+    </div>
+
+    <div id="wizard1">トレイルを作成</div>
+    <div id="wizard2">クリップボードにコピー</div>
+
+    <script src="https://api.geolonia.com/v1/embed?geolonia-api-key=YOUR-API-KEY"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
+    <script src="./main.js"></script>
+  </body>
+</html>
