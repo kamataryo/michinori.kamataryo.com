@@ -1,11 +1,19 @@
 {
-  "name": "trail-sharing",
-  "description": "trail-sharing.geolonia.com",
+  "name": "@geolonia/trail-sharing",
+  "description": "Web app to shre trail via URL.",
   "version": "1.0.0",
   "scripts": {
-    "start": "http-server docs -o -c-1"
+    "build": "webpack -p"
   },
   "devDependencies": {
-    "http-server": "^0.12.3"
-  }
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "@turf/turf": "^5.1.6"
+  },
+  "main": "dist/main.js",
+  "repository": "git@github.com:geolonia/trail-sharing.git",
+  "author": "kamataryo <kamataryo@users.noreply.github.com>",
+  "license": "MIT"
 }
