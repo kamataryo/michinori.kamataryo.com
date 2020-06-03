@@ -1,11 +1,5 @@
 html,
-body {
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-}
-
+body,
 #map {
   width: 100%;
   height: 100%;
@@ -30,10 +24,6 @@ body {
   font-size: 90%;
 }
 
-#address {
-  width: calc(100% - 100px);
-}
-
 .forkme {
   position: absolute;
   top: 0;
@@ -49,14 +39,6 @@ body {
   font-family: "Baloo Thambi 2", cursive;
 }
 
-label span {
-  font-size: 80%;
-}
-
-.flex {
-  display: flex;
-}
-
 #url {
   max-width: 300px;
 }
@@ -65,46 +47,76 @@ label span {
   cursor: pointer;
 }
 
-#wizard1 {
+@keyframes wizard-bounce-1 {
+  0% {
+    right: 55px;
+  }
+  50% {
+    right: 80px;
+  }
+  100% {
+    right: 55px;
+  }
+}
+@keyframes wizard-bounce-2 {
+  0% {
+    bottom: 108px;
+  }
+  50% {
+    bottom: 130px;
+  }
+  100% {
+    bottom: 108px;
+  }
+}
+
+.wizard {
   display: none;
   font-size: 80%;
   position: fixed;
   font-family: sans-serif;
-  background-color: red;
+  background-color: #e74230;
+  color: white;
   padding: 4px 12px 3px;
   border-radius: 4px;
-  right: 55px;
-  top: 108px;
+  animation-duration: 0.8s;
+  animation-iteration-count: 3;
+  animation-timing-function: ease;
 }
 
-#wizard1:before {
+.wizard:before {
   content: "";
   position: absolute;
+}
+
+#wizard-trail {
+  right: 55px;
+  top: 108px;
+  animation-name: wizard-bounce-1;
+}
+#wizard-copy {
+  left: 70px;
+  bottom: 108px;
+  animation-name: wizard-bounce-2;
+}
+#wizard-copied {
+  left: 90px;
+  bottom: 108px;
+  background-color: #4230e7;
+}
+
+/* 吹き出し */
+#wizard-trail:before {
   top: 50%;
   left: 100%;
   margin-top: -7px;
   border: 7px solid transparent;
-  border-left: 7px solid red;
+  border-left: 7px solid #e74230;
 }
-
-#wizard2 {
-  display: none;
-  font-size: 80%;
-  position: fixed;
-  font-family: sans-serif;
-  background-color: red;
-  padding: 4px 12px 3px;
-  border-radius: 4px;
-  left: 70px;
-  bottom: 108px;
-}
-
-#wizard2:before {
-  content: "";
-  position: absolute;
+#wizard-copy:before {
   top: 100%;
   right: 25px;
   margin-bottom: -7px;
   border: 7px solid transparent;
-  border-top: 7px solid red;
+  border-top: 7px solid #e74230;
 }

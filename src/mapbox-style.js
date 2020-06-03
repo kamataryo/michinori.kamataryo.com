@@ -32,3 +32,17 @@ export const drawStyles = [
     },
   },
 ];
+
+export const drawLineTextStyle = {
+  id: "symbols",
+  type: "symbol",
+  source: "mapbox-gl-draw-cold",
+  filter: ["all", ["has", "distance"], ["all", ["has", "unit"]]],
+  layout: {
+    "symbol-placement": "line",
+    "text-font": ["Noto Sans Regular"],
+    "text-field": "a{distance}{unit}b",
+    "text-size": 16,
+  },
+  paint: {},
+};
