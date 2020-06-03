@@ -38,7 +38,6 @@ map.on("load", () => {
     if (e.action === "move" || e.action === "change_coordinates") {
       const feature = draw.getAll().features[0];
       toggleWizard("trail", false);
-      toggleWizard("copy", true, 1000);
       serialize(feature);
     }
   });
