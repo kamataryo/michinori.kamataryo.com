@@ -12,7 +12,15 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <div id="map"></div>
+    <div
+      id="map"
+      data-marker="off"
+      data-lat="35.6804"
+      data-lng="139.7690"
+      data-zoom="10"
+      data-hash="on"
+      data-geolocate-control="on"
+    ></div>
 
     <a class="forkme" href="https://github.com/geolonia/trail-sharing"
       ><img
@@ -36,6 +44,13 @@
           >Geolonia Inc.</a
         >
       </p>
+    </div>
+
+    <div id="info">
+      <dl>
+        <dt>総延長</dt>
+        <dd id="distance"></dd>
+      </dl>
     </div>
 
     <div id="wizard-trail" class="wizard">トレイルを作成</div>

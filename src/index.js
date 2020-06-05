@@ -1,12 +1,9 @@
-import { drawStyles, drawLineTextStyle } from "./mapbox-style";
+import { drawStyles } from "./mapbox-style";
 import { serialize, deserialize } from "./url";
-// import { calcLength } from "./util";
-import { toggleWizard } from "./wizard-ui";
+import { calcLength } from "./util";
+import { toggleWizard, setDistance } from "./ui";
 
-const map = new geolonia.Map({
-  container: document.getElementById("map"),
-  hash: true,
-});
+const map = new geolonia.Map("#map");
 const draw = new MapboxDraw({
   controls: {
     point: false,
@@ -16,13 +13,16 @@ const draw = new MapboxDraw({
   },
   styles: drawStyles,
 });
-// map.addLayer(drawLineTextStyle);
 
 map.addControl(draw, "top-right");
 
 map.on("load", () => {
   const geojson = deserialize();
-  geojson && draw.set(geojson);
+  if (geojson) {
+    const distance = calcLength(geojson.features[0].geometry);
+    setDistance(distance);
+    draw.set(geojson);
+  }
   toggleWizard("trail", true, 1000);
 
   map.on("draw.create", (e) => {
@@ -32,6 +32,8 @@ map.on("load", () => {
     toggleWizard("trail", false);
     toggleWizard("copy", true, 1000);
     serialize(feature);
+    const distance = calcLength(feature.geometry);
+    setDistance(distance);
   });
 
   map.on("draw.update", (e) => {
@@ -39,6 +41,8 @@ map.on("load", () => {
       const feature = draw.getAll().features[0];
       toggleWizard("trail", false);
       serialize(feature);
+      const distance = calcLength(feature.geometry);
+      setDistance(distance);
     }
   });
 });

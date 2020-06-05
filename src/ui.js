@@ -13,6 +13,8 @@ document.getElementById("clip").addEventListener("click", () => {
 const wizardForTrail = document.getElementById("wizard-trail");
 const wizardForCopy = document.getElementById("wizard-copy");
 const wizardForCopied = document.getElementById("wizard-copied");
+const distanceField = document.getElementById("distance");
+const info = document.getElementById("info");
 
 /**
  *
@@ -39,4 +41,18 @@ export const toggleWizard = (wizardId, open, delay = 0) => {
   if (wizard) {
     setTimeout(() => (wizard.style.display = nextDisplay), delay);
   }
+};
+
+/**
+ * @param {number} disatance
+ */
+export const setDistance = (distance) => {
+  let label = "";
+  if (distance < 1) {
+    label = Math.round(distance * 1000) + "m";
+  } else {
+    label = Math.round(distance * 100) / 100 + "km";
+  }
+  info.style.display = "block";
+  distanceField.innerText = label;
 };

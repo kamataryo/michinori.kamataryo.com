@@ -1,4 +1,9 @@
 html,
+body {
+  font-family: sans-serif;
+}
+
+html,
 body,
 #map {
   width: 100%;
@@ -16,6 +21,24 @@ body,
   background-color: rgba(255, 255, 255, 0.8);
   padding: 8px 16px;
   border: 1px solid #cccccc;
+}
+
+#info {
+  display: none;
+  max-width: 80%;
+  position: absolute;
+  bottom: 40px;
+  right: 8px;
+  z-index: 9999;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 8px 16px;
+  border: 1px solid #cccccc;
+  font-size: 90%;
+}
+#info dl {
+  display: flex;
+  margin: 0;
+  align-items: center;
 }
 
 #form p.copyright {
@@ -52,7 +75,7 @@ body,
     right: 55px;
   }
   50% {
-    right: 80px;
+    right: 70px;
   }
   100% {
     right: 55px;
@@ -63,7 +86,7 @@ body,
     bottom: 108px;
   }
   50% {
-    bottom: 130px;
+    bottom: 125px;
   }
   100% {
     bottom: 108px;
@@ -80,7 +103,7 @@ body,
   padding: 4px 12px 3px;
   border-radius: 4px;
   animation-duration: 0.8s;
-  animation-iteration-count: 3;
+  animation-iteration-count: 2;
   animation-timing-function: ease;
 }
 
@@ -91,7 +114,7 @@ body,
 
 #wizard-trail {
   right: 55px;
-  top: 108px;
+  top: 148px;
   animation-name: wizard-bounce-1;
 }
 #wizard-copy {
