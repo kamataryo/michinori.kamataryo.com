@@ -15,7 +15,7 @@ body,
 #form {
   max-width: 80%;
   position: absolute;
-  bottom: 40px;
+  bottom: 65px;
   left: 8px;
   z-index: 9999;
   background-color: rgba(255, 255, 255, 0.8);
@@ -24,27 +24,23 @@ body,
 }
 
 #info {
-  display: none;
   max-width: 80%;
   position: absolute;
-  bottom: 40px;
-  right: 8px;
+  bottom: 30px;
+  left: 8px;
   z-index: 9999;
   background-color: rgba(255, 255, 255, 0.8);
-  padding: 8px 16px;
+  padding: 4px 16px;
   border: 1px solid #cccccc;
-  font-size: 90%;
+  font-size: 80%;
 }
 #info dl {
   display: flex;
   margin: 0;
   align-items: center;
 }
-
-#form p.copyright {
-  margin: 2px 0 0 0;
-  text-align: right;
-  font-size: 90%;
+#info dd {
+  margin-left: 10px;
 }
 
 .forkme {
@@ -83,13 +79,13 @@ body,
 }
 @keyframes wizard-bounce-2 {
   0% {
-    bottom: 108px;
+    bottom: 113px;
   }
   50% {
-    bottom: 125px;
+    bottom: 130px;
   }
   100% {
-    bottom: 108px;
+    bottom: 113px;
   }
 }
 
@@ -105,6 +101,7 @@ body,
   animation-duration: 0.8s;
   animation-iteration-count: 2;
   animation-timing-function: ease;
+  z-index: 999999;
 }
 
 .wizard:before {
@@ -118,13 +115,13 @@ body,
   animation-name: wizard-bounce-1;
 }
 #wizard-copy {
-  left: 70px;
-  bottom: 108px;
+  left: 80px;
+  bottom: 113px;
   animation-name: wizard-bounce-2;
 }
 #wizard-copied {
-  left: 90px;
-  bottom: 108px;
+  left: 100px;
+  bottom: 113px;
   background-color: #4230e7;
 }
 

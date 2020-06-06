@@ -30,6 +30,7 @@ map.on("load", () => {
     draw.deleteAll();
     draw.set({ type: "FeatureCollection", features: [feature] });
     toggleWizard("trail", false);
+    toggleWizard("copied", false);
     toggleWizard("copy", true, 1000);
     serialize(feature);
     const distance = calcLength(feature.geometry);
