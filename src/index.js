@@ -28,11 +28,13 @@ map.on("load", async () => {
     if (endMarker) {
       endMarker.remove();
     }
-    startMarker = new geolonia.Marker();
-    endMarker = new geolonia.Marker();
-    const lastIndex = feature.geometry.coordinates.length - 1;
-    startMarker.setLngLat(feature.geometry.coordinates[0]).addTo(map);
-    endMarker.setLngLat(feature.geometry.coordinates[lastIndex]).addTo(map);
+    if (feature) {
+      startMarker = new geolonia.Marker();
+      endMarker = new geolonia.Marker();
+      const lastIndex = feature.geometry.coordinates.length - 1;
+      startMarker.setLngLat(feature.geometry.coordinates[0]).addTo(map);
+      endMarker.setLngLat(feature.geometry.coordinates[lastIndex]).addTo(map);
+    }
   };
 
   if (geojson) {
@@ -82,5 +84,14 @@ map.on("load", async () => {
       setDistance(distance);
       setMarker(feature);
     }
+  });
+
+  map.on("draw.delete", () => {
+    map.removeLayer(verticeStyle.id);
+    map.removeSource("app-vertice");
+    setMarker(false);
+    toggleWizard("copied", false);
+    toggleWizard("copy", false);
+    toggleWizard("trail", true, 1000);
   });
 });
