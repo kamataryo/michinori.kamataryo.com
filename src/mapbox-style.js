@@ -32,3 +32,29 @@ export const drawStyles = [
     },
   },
 ];
+
+export const verticeStyle = {
+  id: "app-vertice",
+  type: "symbol",
+  source: "app-vertice",
+  paint: {
+    "text-color": "#000",
+    "text-halo-color": "#FFF",
+    "text-halo-width": 2,
+  },
+  layout: {
+    "text-field": "aaa",
+    "text-field": [
+      "concat",
+      [
+        "to-string",
+        ["/", ["round", ["*", 100, ["get", "cumulative_length"]]], 100],
+      ],
+      " km",
+    ],
+    "text-size": 14,
+    "text-font": ["Noto Sans Regular"],
+    "text-offset": [0, 1],
+    "text-allow-overlap": false,
+  },
+};

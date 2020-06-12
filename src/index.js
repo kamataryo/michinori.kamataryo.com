@@ -1,4 +1,4 @@
-import { drawStyles } from "./mapbox-style";
+import { drawStyles, verticeStyle } from "./mapbox-style";
 import { serialize, deserialize } from "./url";
 import { calcLength } from "./util";
 import { toggleWizard, setDistance } from "./ui";
@@ -36,10 +36,12 @@ map.on("load", async () => {
   };
 
   if (geojson) {
-    const feature = geojson.features[0];
-    const distance = await calcLength(feature.geometry);
-    setDistance(distance);
     draw.set(geojson);
+    const feature = geojson.features[0];
+    const { distance, vertice } = await calcLength(feature.geometry);
+    map.addSource("app-vertice", { type: "geojson", data: vertice });
+    map.addLayer(verticeStyle);
+    setDistance(distance);
     setMarker(feature);
   }
   toggleWizard("trail", true, 1000);
@@ -52,7 +54,14 @@ map.on("load", async () => {
     toggleWizard("copied", false);
     toggleWizard("copy", true, 1000);
     serialize(feature);
-    const distance = await calcLength(feature.geometry);
+    const { distance, vertice } = await calcLength(feature.geometry);
+    const source = map.getSource("app-vertice");
+    if (source) {
+      map.removeLayer(verticeStyle.id);
+      map.removeSource("app-vertice");
+    }
+    map.addSource("app-vertice", { type: "geojson", data: vertice });
+    map.addLayer(verticeStyle);
     setDistance(distance);
     setMarker(feature);
   });
@@ -62,7 +71,14 @@ map.on("load", async () => {
       const feature = draw.getAll().features[0];
       toggleWizard("trail", false);
       serialize(feature);
-      const distance = await calcLength(feature.geometry);
+      const { distance, vertice } = await calcLength(feature.geometry);
+      const source = map.getSource("app-vertice");
+      if (source) {
+        map.removeLayer(verticeStyle.id);
+        map.removeSource("app-vertice");
+      }
+      map.addSource("app-vertice", { type: "geojson", data: vertice });
+      map.addLayer(verticeStyle);
       setDistance(distance);
       setMarker(feature);
     }
