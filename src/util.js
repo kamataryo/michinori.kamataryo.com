@@ -1,6 +1,5 @@
-import * as turf from "@turf/turf";
-
-export const calcLength = (geometry) => {
+export const calcLength = async (geometry) => {
+  const turf = await import("@turf/turf");
   const { coordinates } = geometry;
   let distance = 0;
   for (let index = 1; index < coordinates.length; index++) {
