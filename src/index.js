@@ -18,12 +18,32 @@ map.addControl(draw, "top-right");
 
 map.on("load", () => {
   const geojson = deserialize();
+
+  let startMarker
+  let endMarker
+  const setMarker = (feature) => {
+    if(startMarker) {
+      startMarker.remove()
+    }
+    if(endMarker) {
+      endMarker.remove()
+    }
+    startMarker = new geolonia.Marker()
+    endMarker = new geolonia.Marker()
+    const lastIndex = feature.geometry.coordinates.length - 1
+    startMarker.setLngLat(feature.geometry.coordinates[0]).addTo(map)
+    endMarker.setLngLat(feature.geometry.coordinates[lastIndex]).addTo(map)
+  }
+
   if (geojson) {
-    const distance = calcLength(geojson.features[0].geometry);
+    const feature = geojson.features[0]
+    const distance = calcLength(feature.geometry);
     setDistance(distance);
     draw.set(geojson);
+    setMarker(feature);
   }
   toggleWizard("trail", true, 1000);
+
 
   map.on("draw.create", (e) => {
     const feature = e.features[0];
@@ -35,6 +55,7 @@ map.on("load", () => {
     serialize(feature);
     const distance = calcLength(feature.geometry);
     setDistance(distance);
+    setMarker(feature)
   });
 
   map.on("draw.update", (e) => {
@@ -44,6 +65,7 @@ map.on("load", () => {
       serialize(feature);
       const distance = calcLength(feature.geometry);
       setDistance(distance);
+      setMarker(feature)
     }
   });
 });
