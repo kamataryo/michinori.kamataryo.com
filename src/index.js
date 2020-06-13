@@ -18,6 +18,7 @@ const exportControl = new ExportControl({
   dpi: 300,
   attribution: "© Geolonia © OpenStreetMap Contributors",
 });
+
 const copyUrlControl = new CopyUrlToClipboardControl({
   callback: () => {
     toggleWizard("copy", false, 0);
@@ -32,6 +33,12 @@ map.addControl(copyUrlControl);
 
 map.on("load", async () => {
   const geojson = deserialize();
+
+  document
+    .querySelector("button.mapbox-gl-download")
+    .addEventListener("click", () => {
+      toggleWizard("download", false);
+    });
 
   /**
    * Set vertice symbol and its distance labels
