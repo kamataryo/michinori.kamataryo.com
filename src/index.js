@@ -1,7 +1,8 @@
-import { drawStyles, verticeStyle } from "./mapbox-style";
+import { drawStyles, verticeStyle, endCircleStyle } from "./mapbox-style";
 import { serialize, deserialize } from "./url";
 import { calcLength } from "./util";
 import { toggleWizard, setDistance } from "./ui";
+import ExportControl from "@tilecloud/mbgl-export-control";
 
 const map = new geolonia.Map("#map");
 const draw = new MapboxDraw({
@@ -13,38 +14,47 @@ const draw = new MapboxDraw({
   },
   styles: drawStyles,
 });
+const exportControl = new ExportControl({
+  dpi: 300,
+  attribution: "© Geolonia © OpenStreetMap Contributors",
+});
 
 map.addControl(draw, "top-right");
+map.addControl(exportControl);
 
 map.on("load", async () => {
   const geojson = deserialize();
 
-  let startMarker;
-  let endMarker;
-  const setMarker = (feature) => {
-    if (startMarker) {
-      startMarker.remove();
-    }
-    if (endMarker) {
-      endMarker.remove();
-    }
-    if (feature) {
-      startMarker = new geolonia.Marker();
-      endMarker = new geolonia.Marker();
-      const lastIndex = feature.geometry.coordinates.length - 1;
-      startMarker.setLngLat(feature.geometry.coordinates[0]).addTo(map);
-      endMarker.setLngLat(feature.geometry.coordinates[lastIndex]).addTo(map);
+  /**
+   * Set vertice symbol and its distance labels
+   * @param {GeoJSON} vertice
+   */
+  const setSymbols = (vertice) => {
+    if (vertice) {
+      const source = map.getSource("app-vertice");
+      if (source) {
+        map.removeLayer(verticeStyle.id);
+        map.removeLayer("app-end-circle");
+        map.removeSource("app-vertice");
+      }
+      map.addSource("app-vertice", { type: "geojson", data: vertice });
+      map.addLayer(verticeStyle);
+      map.addLayer(endCircleStyle);
+    } else {
+      map.removeLayer(verticeStyle.id);
+      map.removeLayer("app-end-circle");
+      map.removeSource("app-vertice");
     }
   };
 
+  // initial draw
   if (geojson) {
     draw.set(geojson);
     const feature = geojson.features[0];
     const { distance, vertice } = await calcLength(feature.geometry);
-    map.addSource("app-vertice", { type: "geojson", data: vertice });
-    map.addLayer(verticeStyle);
-    setDistance(distance);
+    setSymbols(vertice);
     setMarker(feature);
+    setDistance(distance);
   }
   toggleWizard("trail", true, 1000);
 
@@ -55,41 +65,25 @@ map.on("load", async () => {
     toggleWizard("trail", false);
     toggleWizard("copied", false);
     toggleWizard("copy", true, 1000);
-    serialize(feature);
     const { distance, vertice } = await calcLength(feature.geometry);
-    const source = map.getSource("app-vertice");
-    if (source) {
-      map.removeLayer(verticeStyle.id);
-      map.removeSource("app-vertice");
-    }
-    map.addSource("app-vertice", { type: "geojson", data: vertice });
-    map.addLayer(verticeStyle);
+    serialize(feature);
+    setSymbols(vertice);
     setDistance(distance);
-    setMarker(feature);
   });
 
   map.on("draw.update", async (e) => {
     if (e.action === "move" || e.action === "change_coordinates") {
-      const feature = draw.getAll().features[0];
       toggleWizard("trail", false);
-      serialize(feature);
+      const feature = draw.getAll().features[0];
       const { distance, vertice } = await calcLength(feature.geometry);
-      const source = map.getSource("app-vertice");
-      if (source) {
-        map.removeLayer(verticeStyle.id);
-        map.removeSource("app-vertice");
-      }
-      map.addSource("app-vertice", { type: "geojson", data: vertice });
-      map.addLayer(verticeStyle);
+      serialize(feature);
+      setSymbols(vertice);
       setDistance(distance);
-      setMarker(feature);
     }
   });
 
   map.on("draw.delete", () => {
-    map.removeLayer(verticeStyle.id);
-    map.removeSource("app-vertice");
-    setMarker(false);
+    setSymbols(false);
     toggleWizard("copied", false);
     toggleWizard("copy", false);
     toggleWizard("trail", true, 1000);

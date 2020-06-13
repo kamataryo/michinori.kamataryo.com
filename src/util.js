@@ -7,7 +7,7 @@ export const calcLength = async (geometry) => {
     features: [
       {
         type: "Feature",
-        properties: { cumulative_length: 0 },
+        properties: { cumulative_length: 0, isEnd: true },
         geometry: {
           type: "Point",
           coordinates: coordinates[0],
@@ -23,7 +23,10 @@ export const calcLength = async (geometry) => {
     distance += length;
     vertice.features.push({
       type: "Feature",
-      properties: { cumulative_length: distance },
+      properties: {
+        cumulative_length: distance,
+        isEnd: index === coordinates.length - 1,
+      },
       geometry: {
         type: "Point",
         coordinates: coordinates[index],

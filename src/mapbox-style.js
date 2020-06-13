@@ -13,7 +13,7 @@ export const drawStyles = [
       "line-join": "round",
     },
     paint: {
-      "line-color": "rgb(255, 0, 0)",
+      "line-color": "#e74230",
       "line-width": 2,
     },
   },
@@ -37,6 +37,7 @@ export const verticeStyle = {
   id: "app-vertice",
   type: "symbol",
   source: "app-vertice",
+  filter: ["all", ["has", "cumulative_length"]],
   paint: {
     "text-color": "#000",
     "text-halo-color": "#FFF",
@@ -56,5 +57,16 @@ export const verticeStyle = {
     "text-font": ["Noto Sans Regular"],
     "text-offset": [0, 1],
     "text-allow-overlap": false,
+  },
+};
+
+export const endCircleStyle = {
+  id: "app-end-circle",
+  type: "circle",
+  source: "app-vertice",
+  filter: ["all", ["==", "isEnd", true]],
+  paint: {
+    "circle-radius": 8,
+    "circle-color": "#e74230",
   },
 };
