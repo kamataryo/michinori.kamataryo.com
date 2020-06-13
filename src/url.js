@@ -92,6 +92,7 @@ export class CopyUrlToClipboardControl {
       input.setSelectionRange(0, 99999);
       document.execCommand("copy");
       input.setSelectionRange(0, 0);
+      input.blur(); // expect the device hide virtual keyboard
       typeof this.options.callback === "function" && this.options.callback();
     };
 
