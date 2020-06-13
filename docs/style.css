@@ -32,19 +32,30 @@ body {
   left: -9999px;
 }
 
+#done {
+  position: absolute;
+  right: 10px;
+  bottom: 50px;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  box-shadow: none;
+  background-color: #e74230;
+  opacity: 0.8;
+  color: white;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: none;
+  padding-top: 5px;
+}
+
 .forkme {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 999999;
-}
-
-.credit {
-  margin: 0 16px;
-  padding: 0;
-  line-height: 32px;
-  text-align: right;
-  font-family: "Baloo Thambi 2", cursive;
 }
 
 @keyframes wizard-bounce-horizontal {

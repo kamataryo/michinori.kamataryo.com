@@ -87,13 +87,16 @@ export class CopyUrlToClipboardControl {
     button.innerHTML = linkIcon;
     this.container.appendChild(button);
 
-    button.addEventListener("click", () => {
+    const onClickHandler = () => {
       input.select();
       input.setSelectionRange(0, 99999);
       document.execCommand("copy");
       input.setSelectionRange(0, 0);
       typeof this.options.callback === "function" && this.options.callback();
-    });
+    };
+
+    button.addEventListener("click", onClickHandler);
+    button.addEventListener("touchstart", onClickHandler);
     return this.container;
   }
 

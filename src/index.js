@@ -34,11 +34,11 @@ map.addControl(copyUrlControl);
 map.on("load", async () => {
   const geojson = deserialize();
 
-  document
-    .querySelector("button.mapbox-gl-download")
-    .addEventListener("click", () => {
-      toggleWizard("download", false);
-    });
+  const download = document.querySelector("button.mapbox-gl-download");
+  download.addEventListener("click", () => toggleWizard("download", false));
+  download.addEventListener("touchstart", () =>
+    toggleWizard("download", false)
+  );
 
   /**
    * Set vertice symbol and its distance labels
@@ -103,4 +103,21 @@ map.on("load", async () => {
     toggleWizard("download", false);
     toggleWizard("trail", true, 1000);
   });
+
+  // for touch device
+  if ("ontouchstart" in window) {
+    const done = document.getElementById("done");
+
+    done.addEventListener("touchstart", () => {
+      done.style.display = "none";
+      draw.changeMode("simple_select");
+    });
+    map.on("draw.modechange", (e) => {
+      if (e.mode === "draw_line_string") {
+        done.style.display = "block";
+      } else {
+        done.style.display = "none";
+      }
+    });
+  }
 });
