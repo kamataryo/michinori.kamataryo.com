@@ -26,35 +26,10 @@ body {
   text-align: right;
 }
 
-#form {
-  max-width: 80%;
+#url {
   position: absolute;
-  bottom: 65px;
-  left: 8px;
-  z-index: 9999;
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 8px 16px;
-  border: 1px solid #cccccc;
-}
-
-#info {
-  max-width: 80%;
-  position: absolute;
-  bottom: 30px;
-  left: 8px;
-  z-index: 9999;
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 4px 16px;
-  border: 1px solid #cccccc;
-  font-size: 80%;
-}
-#info dl {
-  display: flex;
-  margin: 0;
-  align-items: center;
-}
-#info dd {
-  margin-left: 10px;
+  top: -9999px;
+  left: -9999px;
 }
 
 .forkme {
@@ -72,15 +47,7 @@ body {
   font-family: "Baloo Thambi 2", cursive;
 }
 
-#url {
-  max-width: 300px;
-}
-
-#clip {
-  cursor: pointer;
-}
-
-@keyframes wizard-bounce-1 {
+@keyframes wizard-bounce-horizontal {
   0% {
     right: 55px;
   }
@@ -89,17 +56,6 @@ body {
   }
   100% {
     right: 55px;
-  }
-}
-@keyframes wizard-bounce-2 {
-  0% {
-    bottom: 113px;
-  }
-  50% {
-    bottom: 130px;
-  }
-  100% {
-    bottom: 113px;
   }
 }
 
@@ -115,42 +71,38 @@ body {
   animation-duration: 0.8s;
   animation-iteration-count: 2;
   animation-timing-function: ease;
-  z-index: 999999;
-}
-
-.wizard:before {
-  content: "";
-  position: absolute;
-}
-
-#wizard-trail {
+  z-index: 99999;
   right: 55px;
-  top: 178px;
-  animation-name: wizard-bounce-1;
-}
-#wizard-copy {
-  left: 80px;
-  bottom: 113px;
-  animation-name: wizard-bounce-2;
-}
-#wizard-copied {
-  left: 100px;
-  bottom: 113px;
-  background-color: #4230e7;
+  animation-name: wizard-bounce-horizontal;
 }
 
 /* 吹き出し */
-#wizard-trail:before {
+.wizard:before {
+  content: "";
+  position: absolute;
   top: 50%;
   left: 100%;
   margin-top: -7px;
   border: 7px solid transparent;
   border-left: 7px solid #e74230;
 }
-#wizard-copy:before {
-  top: 100%;
-  right: 25px;
-  margin-bottom: -7px;
-  border: 7px solid transparent;
-  border-top: 7px solid #e74230;
+
+#wizard-trail {
+  top: 178px;
+}
+
+#wizard-download {
+  top: 245px;
+}
+
+#wizard-copy {
+  top: 285px;
+}
+#wizard-copied {
+  top: 285px;
+  background-color: #4230e7;
+  animation: none;
+}
+#wizard-copied:before {
+  display: none;
 }

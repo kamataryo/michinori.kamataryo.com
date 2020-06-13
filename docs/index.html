@@ -13,7 +13,7 @@
     />
     <meta
       name="description"
-      content="地図上のみちのりを URL として共有することができます。"
+      content="地図上のみちのりを共有するサービスです。みちのりは画像としてダウンロードしたり、 URL として共有することができます。"
     />
     <meta property="og:url" content="https://trail-sharing.geolonia.com/" />
     <meta
@@ -22,7 +22,7 @@
     />
     <meta
       property="og:description"
-      content="地図上のみちのりを URL として共有することができます。"
+      content="地図上のみちのりを共有するサービスです。みちのりは画像としてダウンロードしたり、 URL として共有することができます。"
     />
     <meta
       property="og:image"
@@ -60,21 +60,9 @@
         data-recalc-dims="1"
     /></a>
 
-    <div id="form">
-      <input id="url" type="text" />
-      <button id="clip" data-clipboard-target="#url">
-        Copy
-      </button>
-    </div>
-
-    <div id="info">
-      <dl>
-        <dt>総延長</dt>
-        <dd id="distance">- km</dd>
-      </dl>
-    </div>
-
+    <input id="url" type="text" />
     <div id="wizard-trail" class="wizard">みちのりを作成</div>
+    <div id="wizard-download" class="wizard">地図をダウンロード</div>
     <div id="wizard-copy" class="wizard">クリップボードにコピー</div>
     <div id="wizard-copied" class="wizard">コピーされました！</div>
 

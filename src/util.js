@@ -1,4 +1,8 @@
-export const calcLength = async (geometry) => {
+/**
+ * generate Points GeoJSON for each vertex of the trail
+ * @param {GeoJSON.geometry} geometry
+ */
+export const generateVertice = async (geometry) => {
   const turf = await import("@turf/turf");
   const { coordinates } = geometry;
 
@@ -33,5 +37,5 @@ export const calcLength = async (geometry) => {
       },
     });
   }
-  return { vertice, distance };
+  return { vertice };
 };

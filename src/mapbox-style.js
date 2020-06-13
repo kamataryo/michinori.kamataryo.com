@@ -26,7 +26,7 @@ export const drawStyles = [
       "line-join": "round",
     },
     paint: {
-      "line-color": "#fbb03b",
+      "line-color": "#e74230",
       "line-dasharray": [0.2, 2],
       "line-width": 2,
     },

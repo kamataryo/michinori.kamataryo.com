@@ -1,7 +1,7 @@
 import { drawStyles, verticeStyle, endCircleStyle } from "./mapbox-style";
-import { serialize, deserialize } from "./url";
-import { calcLength } from "./util";
-import { toggleWizard, setDistance } from "./ui";
+import { serialize, deserialize, CopyUrlToClipboardControl } from "./url";
+import { generateVertice } from "./util";
+import { toggleWizard } from "./wizard";
 import ExportControl from "@tilecloud/mbgl-export-control";
 
 const map = new geolonia.Map("#map");
@@ -18,9 +18,17 @@ const exportControl = new ExportControl({
   dpi: 300,
   attribution: "© Geolonia © OpenStreetMap Contributors",
 });
+const copyUrlControl = new CopyUrlToClipboardControl({
+  callback: () => {
+    toggleWizard("copy", false, 0);
+    toggleWizard("copied", true, 0);
+    toggleWizard("copied", false, 3000);
+  },
+});
 
 map.addControl(draw, "top-right");
 map.addControl(exportControl);
+map.addControl(copyUrlControl);
 
 map.on("load", async () => {
   const geojson = deserialize();
@@ -51,10 +59,8 @@ map.on("load", async () => {
   if (geojson) {
     draw.set(geojson);
     const feature = geojson.features[0];
-    const { distance, vertice } = await calcLength(feature.geometry);
+    const { vertice } = await generateVertice(feature.geometry);
     setSymbols(vertice);
-    setMarker(feature);
-    setDistance(distance);
   }
   toggleWizard("trail", true, 1000);
 
@@ -64,21 +70,20 @@ map.on("load", async () => {
     draw.set({ type: "FeatureCollection", features: [feature] });
     toggleWizard("trail", false);
     toggleWizard("copied", false);
+    toggleWizard("download", true, 1000);
     toggleWizard("copy", true, 1000);
-    const { distance, vertice } = await calcLength(feature.geometry);
+    const { vertice } = await generateVertice(feature.geometry);
     serialize(feature);
     setSymbols(vertice);
-    setDistance(distance);
   });
 
   map.on("draw.update", async (e) => {
     if (e.action === "move" || e.action === "change_coordinates") {
       toggleWizard("trail", false);
       const feature = draw.getAll().features[0];
-      const { distance, vertice } = await calcLength(feature.geometry);
+      const { vertice } = await generateVertice(feature.geometry);
       serialize(feature);
       setSymbols(vertice);
-      setDistance(distance);
     }
   });
 
@@ -86,6 +91,7 @@ map.on("load", async () => {
     setSymbols(false);
     toggleWizard("copied", false);
     toggleWizard("copy", false);
+    toggleWizard("download", false);
     toggleWizard("trail", true, 1000);
   });
 });
