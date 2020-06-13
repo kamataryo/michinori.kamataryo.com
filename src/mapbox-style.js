@@ -53,7 +53,7 @@ export const verticeStyle = {
       ],
       " km",
     ],
-    "text-size": 14,
+    "text-size": 16,
     "text-font": ["Noto Sans Regular"],
     "text-offset": [0, 1],
     "text-allow-overlap": false,
