@@ -79,8 +79,8 @@ map.on("load", async () => {
     toggleWizard("copied", false);
     toggleWizard("download", true, 1000);
     toggleWizard("copy", true, 1000);
-    toggleWizard("download", false, 8000);
-    toggleWizard("copy", false, 8000);
+    toggleWizard("download", false, 11000);
+    toggleWizard("copy", false, 11000);
     const { vertice } = await generateVertice(feature.geometry);
     serialize(feature);
     setSymbols(vertice);

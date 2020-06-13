@@ -102,6 +102,7 @@ body {
   top: 285px;
   background-color: #4230e7;
   animation: none;
+  margin-left: 20px;
 }
 #wizard-copied:before {
   display: none;
