@@ -1,6 +1,6 @@
 {
-  "name": "@geolonia/trail-sharing",
-  "description": "Web app to shre trail via URL.",
+  "name": "@geolonia/michinori",
+  "description": "Web app to shre trail with image and URL.",
   "version": "1.0.0",
   "scripts": {
     "build": "webpack -p"
@@ -15,7 +15,7 @@
     "@turf/turf": "^5.1.6"
   },
   "main": "dist/main.js",
-  "repository": "git@github.com:geolonia/trail-sharing.git",
+  "repository": "git@github.com:geolonia/michinori.git",
   "author": "kamataryo <kamataryo@users.noreply.github.com>",
   "license": "MIT"
 }

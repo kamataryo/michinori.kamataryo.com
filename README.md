@@ -1,11 +1,11 @@
-# trail-sharing.geolonia.com
+# michinori.geolonia.com
 
 ![](docs/ogp.png)
 
 ## Development
 
 ```
-$ git clone git@github.com:geolonia/trail-sharing.geolonia.com.git
-$ cd trail-sharing.geolonia.com
+$ git clone git@github.com:geolonia/michinori.geolonia.com.git
+$ cd michinori.geolonia.com
 $ npm run build
 ```
