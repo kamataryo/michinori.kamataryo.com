@@ -5,7 +5,7 @@ const LicenseWebpackPlugin = require("license-webpack-plugin")
 module.exports = {
   output: {
     path: path.resolve(__dirname, "docs"),
-    filename: "main.js",
+    filename: "main.bundle.js",
   },
   plugins: [new LicenseWebpackPlugin()],
 };
