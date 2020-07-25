@@ -44,7 +44,6 @@ export const verticeStyle = {
     "text-halo-width": 2,
   },
   layout: {
-    "text-field": "aaa",
     "text-field": [
       "concat",
       [
@@ -56,6 +55,7 @@ export const verticeStyle = {
     "text-size": 16,
     "text-font": ["Noto Sans Regular"],
     "text-offset": [0, 1],
+    "text-variable-anchor": ["bottom", "top"],
     "text-allow-overlap": false,
   },
 };
