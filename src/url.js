@@ -105,3 +105,32 @@ export class CopyUrlToClipboardControl {
     this.container.parentNode.removeChild(this.container);
   }
 }
+
+export class SwitchControl {
+  constructor(options) {
+    this.options = options;
+  }
+
+  onAdd() {
+    this.container = document.createElement("div");
+    this.container.className = "mapboxgl-ctrl mapboxgl-ctrl-group";
+
+    const button = document.createElement("button");
+    button.className = "mapboxgl-ctrl-icon mapbox-gl-switch-style";
+    button.style.display = "flex";
+    button.style.justifyContent = "center";
+    button.style.alignItems = "center";
+    button.type = "button";
+    button.setAttribute("aria-label", "switch style");
+    button.innerHTML = "EL.";
+    this.container.appendChild(button);
+
+    button.addEventListener("click", this.options.onClick);
+    button.addEventListener("touchstart", this.options.onClick);
+    return this.container;
+  }
+
+  onRemove() {
+    this.container.parentNode.removeChild(this.container);
+  }
+}

@@ -1,5 +1,10 @@
-import { drawStyles, verticeStyle, endCircleStyle } from "./mapbox-style";
-import { serialize, deserialize, CopyUrlToClipboardControl } from "./url";
+import { drawStyles, getVerticeStyle, endCircleStyle } from "./mapbox-style";
+import {
+  serialize,
+  deserialize,
+  SwitchControl,
+  CopyUrlToClipboardControl,
+} from "./url";
 import { generateVertice } from "./util";
 import { toggleWizard } from "./wizard";
 import ExportControl from "@tilecloud/mbgl-export-control";
@@ -18,7 +23,17 @@ const exportControl = new ExportControl({
   dpi: 300,
   attribution: "© Geolonia © OpenStreetMap Contributors",
 });
-
+let withElevation = true;
+const switchControl = new SwitchControl({
+  onClick: () => {
+    withElevation = !withElevation;
+    const verticeStyle = getVerticeStyle(withElevation);
+    map.removeLayer(verticeStyle.id);
+    map.removeLayer("app-end-circle");
+    map.addLayer(verticeStyle);
+    map.addLayer(endCircleStyle);
+  },
+});
 const copyUrlControl = new CopyUrlToClipboardControl({
   callback: () => {
     toggleWizard("copy", false, 0);
@@ -28,6 +43,7 @@ const copyUrlControl = new CopyUrlToClipboardControl({
 });
 
 map.addControl(draw, "top-right");
+map.addControl(switchControl);
 map.addControl(exportControl);
 map.addControl(copyUrlControl);
 
@@ -36,15 +52,18 @@ map.on("load", async () => {
 
   const download = document.querySelector("button.mapbox-gl-download");
   download.addEventListener("click", () => toggleWizard("download", false));
-  download.addEventListener("touchstart", () =>
-    toggleWizard("download", false)
-  );
+  download.addEventListener("touchstart", () => {
+    toggleWizard("switch", false);
+    toggleWizard("download", false);
+  });
 
   /**
    * Set vertice symbol and its distance labels
    * @param {GeoJSON} vertice
+   * @param {boolean} withElevation
    */
   const setSymbols = (vertice) => {
+    const verticeStyle = getVerticeStyle(withElevation);
     if (vertice) {
       const source = map.getSource("app-vertice");
       if (source) {
@@ -52,7 +71,10 @@ map.on("load", async () => {
         map.removeLayer("app-end-circle");
         map.removeSource("app-vertice");
       }
-      map.addSource("app-vertice", { type: "geojson", data: vertice });
+      map.addSource("app-vertice", {
+        type: "geojson",
+        data: vertice,
+      });
       map.addLayer(verticeStyle);
       map.addLayer(endCircleStyle);
     } else {
@@ -74,11 +96,16 @@ map.on("load", async () => {
   map.on("draw.create", async (e) => {
     const feature = e.features[0];
     draw.deleteAll();
-    draw.set({ type: "FeatureCollection", features: [feature] });
+    draw.set({
+      type: "FeatureCollection",
+      features: [feature],
+    });
     toggleWizard("trail", false);
     toggleWizard("copied", false);
+    toggleWizard("switch", true, 1000);
     toggleWizard("download", true, 1000);
     toggleWizard("copy", true, 1000);
+    toggleWizard("switch", false, 11000);
     toggleWizard("download", false, 11000);
     toggleWizard("copy", false, 11000);
     const { vertice } = await generateVertice(feature.geometry);
@@ -100,6 +127,7 @@ map.on("load", async () => {
     setSymbols(false);
     toggleWizard("copied", false);
     toggleWizard("copy", false);
+    toggleWizard("switch", false);
     toggleWizard("download", false);
     toggleWizard("trail", true, 1000);
   });

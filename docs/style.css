@@ -102,15 +102,19 @@ body {
   top: 178px;
 }
 
-#wizard-download {
+#wizard-switch {
   top: 245px;
 }
 
-#wizard-copy {
+#wizard-download {
   top: 285px;
 }
+
+#wizard-copy {
+  top: 325px;
+}
 #wizard-copied {
-  top: 285px;
+  top: 325px;
   background-color: #4230e7;
   animation: none;
   margin-left: 20px;

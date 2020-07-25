@@ -33,31 +33,46 @@ export const drawStyles = [
   },
 ];
 
-export const verticeStyle = {
-  id: "app-vertice",
-  type: "symbol",
-  source: "app-vertice",
-  filter: ["all", ["has", "cumulative_length"]],
-  paint: {
-    "text-color": "#000",
-    "text-halo-color": "#FFF",
-    "text-halo-width": 2,
-  },
-  layout: {
-    "text-field": [
-      "concat",
-      [
-        "to-string",
-        ["/", ["round", ["*", 100, ["get", "cumulative_length"]]], 100],
+export const getVerticeStyle = (withElevaition = true) => {
+  const elevationLabelProps = withElevaition
+    ? [
+        " (EL.",
+        { "font-scale": 0.8 },
+        ["get", "elevation_str"],
+        { "font-scale": 0.8 },
+        ")",
+        { "font-scale": 0.8 },
+      ]
+    : [];
+  return {
+    id: "app-vertice",
+    type: "symbol",
+    source: "app-vertice",
+    filter: ["all", ["has", "cumulative_length"]],
+    paint: {
+      "text-color": "#000",
+      "text-halo-color": "#FFF",
+      "text-halo-width": 2,
+    },
+    layout: {
+      "text-field": [
+        "format",
+        [
+          "to-string",
+          ["/", ["round", ["*", 100, ["get", "cumulative_length"]]], 100],
+        ],
+        { "font-scale": 1 },
+        " km",
+        { "font-scale": 1 },
+        ...elevationLabelProps,
       ],
-      " km",
-    ],
-    "text-size": 16,
-    "text-font": ["Noto Sans Regular"],
-    "text-offset": [0, 1],
-    "text-variable-anchor": ["bottom", "top"],
-    "text-allow-overlap": false,
-  },
+      "text-size": 16,
+      "text-font": ["Noto Sans Regular"],
+      "text-offset": [0, 1],
+      "text-variable-anchor": ["bottom", "top"],
+      "text-allow-overlap": false,
+    },
+  };
 };
 
 export const endCircleStyle = {

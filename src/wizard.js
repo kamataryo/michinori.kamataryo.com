@@ -1,11 +1,12 @@
 const wizardForTrail = document.getElementById("wizard-trail");
+const wizardSwitch = document.getElementById("wizard-switch");
 const wizardDownload = document.getElementById("wizard-download");
 const wizardForCopy = document.getElementById("wizard-copy");
 const wizardForCopied = document.getElementById("wizard-copied");
 
 /**
  *
- * @param {'trail' | 'download' | 'copy' |'copied'} wizardId
+ * @param {'trail' | 'switch' | 'download' | 'copy' |'copied'} wizardId
  * @param {boolean} open
  * @param {number} delay
  */
@@ -15,6 +16,9 @@ export const toggleWizard = (wizardId, open, delay = 0) => {
   switch (wizardId) {
     case "trail":
       wizard = wizardForTrail;
+      break;
+    case "switch":
+      wizard = wizardSwitch;
       break;
     case "download":
       wizard = wizardDownload;
