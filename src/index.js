@@ -21,7 +21,7 @@ const draw = new MapboxDraw({
 });
 const exportControl = new ExportControl({
   dpi: 300,
-  attribution: "© Geolonia © OpenStreetMap Contributors",
+  attribution: "© Geolonia | © OpenMapTiles | © OpenStreetMap",
 });
 let withElevation = true;
 const switchControl = new SwitchControl({
