@@ -97,7 +97,10 @@ export class CopyUrlToClipboardControl {
     };
 
     button.addEventListener("click", onClickHandler);
-    button.addEventListener("touchstart", onClickHandler);
+    button.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      onClickHandler(e);
+    });
     return this.container;
   }
 
@@ -126,7 +129,11 @@ export class SwitchControl {
     this.container.appendChild(button);
 
     button.addEventListener("click", this.options.onClick);
-    button.addEventListener("touchstart", this.options.onClick);
+    button.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      this.options.onClick(e);
+    });
+
     return this.container;
   }
 

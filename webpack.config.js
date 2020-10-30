@@ -8,4 +8,9 @@ module.exports = {
     filename: "main.bundle.js",
   },
   plugins: [new LicenseWebpackPlugin()],
+  devServer: {
+    contentBase: path.join(__dirname, "docs"),
+    open: true,
+    port: 3000,
+  },
 };
