@@ -3,21 +3,19 @@
   "description": "Web app to shre trail with image and URL.",
   "version": "1.0.0",
   "scripts": {
-    "start": "webpack-dev-server",
-    "build": "webpack -p"
+    "build": "webpack --mode production"
   },
   "devDependencies": {
-    "license-webpack-plugin": "^2.2.0",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.11.0"
+    "license-webpack-plugin": "^2.3.1",
+    "webpack": "^4",
+    "webpack-cli": "^4.1.0"
   },
   "dependencies": {
     "@tilecloud/mbgl-export-control": "^0.4.2",
     "@turf/turf": "^5.1.6"
   },
-  "main": "dist/main.js",
-  "repository": "git@github.com:geolonia/michinori.git",
+  "main": "docs/main.bundle.js",
   "author": "kamataryo <kamataryo@users.noreply.github.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": "git@github.com:geolonia/michinori.geolonia.com.git"
 }
