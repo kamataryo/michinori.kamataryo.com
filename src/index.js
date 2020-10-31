@@ -5,6 +5,7 @@ import {
   SwitchControl,
   CopyUrlToClipboardControl,
 } from "./url";
+import { CommunityGeocoderControl } from "./geocoder";
 import { generateVertice } from "./util";
 import { toggleWizard } from "./wizard";
 import ExportControl from "@tilecloud/mbgl-export-control";
@@ -41,11 +42,13 @@ const copyUrlControl = new CopyUrlToClipboardControl({
     toggleWizard("copied", false, 3000);
   },
 });
+const communityGeocoderControl = new CommunityGeocoderControl();
 
 map.addControl(draw, "top-right");
 map.addControl(switchControl);
 map.addControl(exportControl);
 map.addControl(copyUrlControl);
+map.addControl(communityGeocoderControl, "bottom-left");
 
 map.on("load", async () => {
   const geojson = deserialize();
