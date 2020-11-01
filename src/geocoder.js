@@ -13,7 +13,10 @@ export class CommunityGeocoderControl {
               this._map.flyTo({ center: latlng });
             },
             (e) => {
-              alert(e.messge);
+              alert(
+                e.messge ||
+                  "見つかりませんでした。もっと詳細な住所を入力してみてください。"
+              );
             }
           );
         }
