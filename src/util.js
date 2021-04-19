@@ -74,6 +74,8 @@ export const generateVertice = async (geometry) => {
   return { vertice };
 };
 
+const elevationCache = {}
+
 /**
  * request GSI and get elevations
  * @param {GeoJSON[]} verices
@@ -83,6 +85,10 @@ export const getElevations = (vertice) => {
   return Promise.all(
     vertice.features.map((feature) => {
       const [lng, lat] = feature.geometry.coordinates;
+      const key = `${lng}/${lat}`
+      if(elevationCache[key]) {
+        return elevationCache[key]
+      }
       return fetch(
         `https://cyberjapandata2.gsi.go.jp/general/dem/scripts/getelevation.php?lon=${lng}&lat=${lat}&outtype=JSON`
       )
@@ -92,6 +98,10 @@ export const getElevations = (vertice) => {
           } else {
             throw res;
           }
+        })
+        .then(data => {
+          elevationCache[key] = data
+          return data
         })
         .catch((err) => {
           console.error(err);

@@ -135,6 +135,27 @@ map.on("load", async () => {
     toggleWizard("trail", true, 1000);
   });
 
+  map.on('click', async () => {
+    const curentMode = draw.getMode();
+    if(curentMode === 'draw_line_string') {
+      // get current drawing feature
+      const { features } = draw.getAll();
+      const feature = features[features.length - 1];
+      if(feature.geometry.coordinates.length < 3) {
+        return
+      } else {
+        const intermediateCoordinates = feature.geometry.coordinates.slice(0, feature.geometry.coordinates.length - 1)
+        const intermediateGeometry = {
+          ...feature.geometry,
+          coordinates: intermediateCoordinates,
+        }
+        const { vertice } = await generateVertice(intermediateGeometry);
+        // serialize(feature);
+        setSymbols(vertice);
+      }
+    }
+  })
+
   // for touch device
   if ("ontouchstart" in window) {
     const done = document.getElementById("done");
