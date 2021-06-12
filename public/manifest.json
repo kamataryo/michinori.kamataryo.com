@@ -1,0 +1,14 @@
+{
+  "short_name": "michinori",
+  "name": "みちのりシェアサービス",
+  "icons": [
+    {
+      "src": "icon.png",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#e74230",
+  "background_color": "#ffffff"
+}

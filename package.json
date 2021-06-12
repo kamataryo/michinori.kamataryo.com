@@ -1,21 +1,25 @@
 {
-  "name": "@geolonia/michinori",
-  "description": "Web app to shre trail with image and URL.",
+  "name": "@geolonia/michinori.geolonia.com",
+  "description": "Web app to share your trails with image and URL.",
   "version": "1.0.0",
   "scripts": {
-    "build": "webpack --mode production"
+    "build": "rimraf docs && webpack --mode production",
+    "start": "webpack serve"
   },
   "devDependencies": {
-    "license-webpack-plugin": "^2.3.1",
-    "webpack": "^4",
-    "webpack-cli": "^4.1.0"
+    "copy-webpack-plugin": "^9.0.0",
+    "license-webpack-plugin": "^2.3.19",
+    "rimraf": "^3.0.2",
+    "webpack": "^5",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
     "@tilecloud/mbgl-export-control": "^0.4.2",
-    "@turf/turf": "^5.1.6"
+    "@turf/turf": "^6.3.0"
   },
   "main": "docs/main.bundle.js",
-  "author": "kamataryo <kamataryo@users.noreply.github.com>",
+  "author": "Geolonia (https://geolonia.com)",
   "license": "MIT",
   "repository": "git@github.com:geolonia/michinori.geolonia.com.git"
 }
