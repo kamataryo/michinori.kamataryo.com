@@ -110,3 +110,8 @@ export const getElevations = (vertice) => {
     })
   );
 };
+
+export const getAttributions = () => {
+  const attribElements = document.getElementsByClassName('maplibregl-ctrl-attrib')
+  return attribElements[0].textContent
+}
