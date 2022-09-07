@@ -58,11 +58,11 @@ map.on("load", async () => {
 
   const download = document.querySelector("button.mapbox-gl-download");
   download.addEventListener("click", () => {
-    exportControl.options.attribution = getAttribution()
+    exportControl.options.attribution = getAttributions()
     toggleWizard("download", false)
   });
   download.addEventListener("touchstart", () => {
-    exportControl.options.attribution = getAttribution()
+    exportControl.options.attribution = getAttributions()
     toggleWizard("switch", false);
     toggleWizard("download", false);
   });
