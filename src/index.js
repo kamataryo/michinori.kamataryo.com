@@ -7,12 +7,11 @@ import {
   getStyle,
 } from "./url";
 import { CommunityGeocoderControl } from "./geocoder";
-import { generateVertice, getAttributions } from "./util";
+import { generateVertice } from "./util";
 import { toggleWizard } from "./wizard";
 import ExportControl from "@tilecloud/mbgl-export-control";
 
 const map = new geolonia.Map({ container: "#map", style: getStyle() });
-
 const draw = new MapboxDraw({
   controls: {
     point: false,
@@ -24,9 +23,8 @@ const draw = new MapboxDraw({
 });
 const exportControl = new ExportControl({
   dpi: 300,
-  attribution: getAttributions(),
+  attribution: "© Geolonia | © OpenStreetMap",
 });
-
 let withElevation = true;
 const switchControl = new SwitchControl({
   onClick: () => {
@@ -57,12 +55,8 @@ map.on("load", async () => {
   const geojson = deserialize();
 
   const download = document.querySelector("button.mapbox-gl-download");
-  download.addEventListener("click", () => {
-    exportControl.options.attribution = getAttribution()
-    toggleWizard("download", false)
-  });
+  download.addEventListener("click", () => toggleWizard("download", false));
   download.addEventListener("touchstart", () => {
-    exportControl.options.attribution = getAttribution()
     toggleWizard("switch", false);
     toggleWizard("download", false);
   });
