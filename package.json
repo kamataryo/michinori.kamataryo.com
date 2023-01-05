@@ -15,7 +15,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
-    "@tilecloud/mbgl-export-control": "^0.4.2",
+    "@geolonia/mbgl-export-control": "^0.4.7",
     "@turf/turf": "^6.3.0"
   },
   "main": "docs/main.bundle.js",

@@ -9,7 +9,7 @@ import {
 import { CommunityGeocoderControl } from "./geocoder";
 import { generateVertice } from "./util";
 import { toggleWizard } from "./wizard";
-import ExportControl from "@tilecloud/mbgl-export-control";
+import ExportControl from "@geolonia/mbgl-export-control";
 
 const map = new geolonia.Map({ container: "#map", style: getStyle() });
 const draw = new MapboxDraw({

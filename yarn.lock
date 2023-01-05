@@ -7,6 +7,14 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.3.tgz#90420f9f9c6d3987f176a19a7d8e764271a2f55d"
   integrity sha512-Fxt+AfXgjMoin2maPIYzFZnQjAXjAL0PHscM5pRTtatFqB+vZxAM9tLp2Optnuw3QOQC40jTNeGYFOMvyf7v9g==
 
+"@geolonia/mbgl-export-control@^0.4.7":
+  version "0.4.7"
+  resolved "https://registry.yarnpkg.com/@geolonia/mbgl-export-control/-/mbgl-export-control-0.4.7.tgz#345eb846a36d9142600cba7b9557e6f4503901f6"
+  integrity sha512-33rFV5hyTB9RE34nh+zsSVPevFo4EBUxLpSxsltqLe31FPofB6py42eMgWDFrHvrOW5XTXeEmmR5wRHrNdfH0w==
+  dependencies:
+    canvas-toBlob "^1.0.0"
+    file-saver "^1.3.8"
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -27,14 +35,6 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
-
-"@tilecloud/mbgl-export-control@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@tilecloud/mbgl-export-control/-/mbgl-export-control-0.4.2.tgz#e6d16f24bf6c2ae0855791dd736425458ecfe416"
-  integrity sha512-iqq3w6fZCLCGe4SbIryxbKSAlab8Q2x732pO+n7WzhReJhWd04OMakgowkOWBku+i1dEAG+G2R0I1UGGy6D19Q==
-  dependencies:
-    canvas-toBlob "^1.0.0"
-    file-saver "^1.3.8"
 
 "@turf/along@^6.3.0":
   version "6.3.0"
@@ -1694,7 +1694,7 @@ caniuse-lite@^1.0.30001219:
 canvas-toBlob@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/canvas-toBlob/-/canvas-toBlob-1.0.0.tgz#9bf32b286bb4e125218b208eecc8321fd033e6c3"
-  integrity sha1-m/MrKGu04SUhiyCO7MgyH9Az5sM=
+  integrity sha512-oU5bawygt/Nef9F+C49eTFmzXzz6yKdGqn6J1wn/LZQF5ulnnZVm0KIZzik85I6tjCbZFH6aa47j4bU2tkHxRw==
 
 chokidar@^2.1.8:
   version "2.1.8"
