@@ -1,6 +1,7 @@
 {
   "name": "@geolonia/michinori.geolonia.com",
   "description": "Web app to share your trails with image and URL.",
+  "private": true,
   "version": "1.0.0",
   "scripts": {
     "build": "rimraf docs && webpack --mode production",
