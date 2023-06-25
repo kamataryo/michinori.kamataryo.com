@@ -19,9 +19,6 @@ module.exports = {
     }),
   ],
   devServer: {
-    mode: 'development',
-  //   contentBase: path.resolve(__dirname, "docs"),
     open: true,
-  //   port: 3000,
   },
 };

@@ -143,7 +143,7 @@ export class SwitchControl {
 }
 
 export const getStyle = () => {
-  const defaultStyle = "geoloniamaps/basic"
+  const defaultStyle = "geoloniamaps/basic-v1"
   const styleUrl = 'https://raw.githubusercontent.com/%s/gh-pages/style.json'
 
   let style
