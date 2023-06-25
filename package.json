@@ -9,13 +9,15 @@
   },
   "devDependencies": {
     "copy-webpack-plugin": "^9.0.0",
+    "css-loader": "^6.8.1",
     "license-webpack-plugin": "^2.3.19",
     "rimraf": "^3.0.2",
-    "webpack": "^5",
-    "webpack-cli": "^4.7.2",
-    "webpack-dev-server": "^3.11.2"
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
+    "@geolonia/geolonia-draw": "https://github.com/geolonia/mapbox-gl-draw",
     "@geolonia/mbgl-export-control": "^0.4.7",
     "@turf/turf": "^6.3.0"
   },

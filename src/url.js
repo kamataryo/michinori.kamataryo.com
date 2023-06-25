@@ -75,10 +75,10 @@ export class CopyUrlToClipboardControl {
 
   onAdd() {
     this.container = document.createElement("div");
-    this.container.className = "mapboxgl-ctrl mapboxgl-ctrl-group";
+    this.container.className = "maplibregl-ctrl maplibregl-ctrl-group";
 
     const button = document.createElement("button");
-    button.className = "mapboxgl-ctrl-icon mapbox-gl-copy-to-clipboard";
+    button.className = "maplibregl-ctrl-icon mapbox-gl-copy-to-clipboard";
     button.style.display = "flex";
     button.style.justifyContent = "center";
     button.style.alignItems = "center";
@@ -116,10 +116,10 @@ export class SwitchControl {
 
   onAdd() {
     this.container = document.createElement("div");
-    this.container.className = "mapboxgl-ctrl mapboxgl-ctrl-group";
+    this.container.className = "maplibregl-ctrl maplibregl-ctrl-group";
 
     const button = document.createElement("button");
-    button.className = "mapboxgl-ctrl-icon mapbox-gl-switch-style";
+    button.className = "maplibregl-ctrl-icon mapbox-gl-switch-style";
     button.style.display = "flex";
     button.style.justifyContent = "center";
     button.style.alignItems = "center";

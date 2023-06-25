@@ -7,6 +7,11 @@ module.exports = {
     path: path.resolve(__dirname, "docs"),
     filename: "main.bundle.js",
   },
+  module: {
+    rules: [
+      { test: /\.css$/, use: "css-loader" },
+    ],
+  },
   plugins: [
     new LicenseWebpackPlugin(),
     new CopyWebpackPlugin({
@@ -14,8 +19,9 @@ module.exports = {
     }),
   ],
   devServer: {
-    contentBase: path.resolve(__dirname, "docs"),
+    mode: 'development',
+  //   contentBase: path.resolve(__dirname, "docs"),
     open: true,
-    port: 3000,
+  //   port: 3000,
   },
 };

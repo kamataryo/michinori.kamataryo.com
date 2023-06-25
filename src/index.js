@@ -1,3 +1,5 @@
+import '@geolonia/geolonia-draw/dist/mapbox-gl-draw.css';
+
 import { drawStyles, getVerticeStyle, endCircleStyle } from "./mapbox-style";
 import {
   serialize,
@@ -10,6 +12,7 @@ import { CommunityGeocoderControl } from "./geocoder";
 import { generateVertice } from "./util";
 import { toggleWizard } from "./wizard";
 import ExportControl from "@geolonia/mbgl-export-control";
+import MapboxDraw from '@geolonia/geolonia-draw'
 
 const map = new geolonia.Map({ container: "#map", style: getStyle() });
 const draw = new MapboxDraw({

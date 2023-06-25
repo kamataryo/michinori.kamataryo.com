@@ -28,7 +28,7 @@ export class CommunityGeocoderControl {
     this._map = map;
     this._container = document.createElement("div");
     this._container.style.display = "flex";
-    this._container.className = "mapboxgl-ctrl mapboxgl-ctrl-group";
+    this._container.className = "maplibregl-ctrl maplibregl-ctrl-group";
     this._input = document.createElement("input");
     this._input.placeholder = "例: 東京都千代田区霞が関1-3-1";
     this._button = document.createElement("button");
