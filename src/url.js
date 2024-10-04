@@ -153,6 +153,10 @@ export const getStyle = () => {
         tiles: ['https://maps.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg'],
         tileSize: 256,
         attribution: '国土地理院 シームレス空中写真',
+      },
+      "gaze": {
+        type: "geojson",
+        data: "https://kamataryo.github.io/gazetteer-of-japan/gaze.geojson",
       }
     },
     "layers": [
@@ -162,6 +166,24 @@ export const getStyle = () => {
         'source': 'gsi-photo',
         'minzoom': 0,
         'maxzoom': 22,
+      },
+      {
+        "id": "gaze",
+        "type": "symbol",
+        "source": "gaze",
+        minzoom: 10,
+        "layout": {
+          "text-field": ["get", "name"],
+          "text-font": ["Open Sans Regular"],
+          "text-size": 14,
+          "text-allow-overlap": false,
+          "text-ignore-placement": false,
+        },
+        "paint": {
+          "text-color": "white",
+          "text-halo-color": "black",
+          "text-halo-width": 1,
+        },
       }
     ]
   }
