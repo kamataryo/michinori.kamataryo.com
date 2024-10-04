@@ -1,5 +1,3 @@
-import '@geolonia/geolonia-draw/dist/mapbox-gl-draw.css';
-
 import { drawStyles, getVerticeStyle, endCircleStyle } from "./mapbox-style";
 import {
   serialize,
@@ -8,13 +6,24 @@ import {
   CopyUrlToClipboardControl,
   getStyle,
 } from "./url";
-import { CommunityGeocoderControl } from "./geocoder";
 import { generateVertice } from "./util";
 import { toggleWizard } from "./wizard";
-import ExportControl from "@geolonia/mbgl-export-control";
-// import MapboxDraw from '@geolonia/geolonia-draw'
+import ExportControl from "./mbgl-export-control";
 
-const map = new geolonia.Map({ container: "#map", style: getStyle() });
+MapboxDraw.constants.classes.CONTROL_BASE  = 'maplibregl-ctrl';
+MapboxDraw.constants.classes.CONTROL_PREFIX = 'maplibregl-ctrl-';
+MapboxDraw.constants.classes.CONTROL_GROUP = 'maplibregl-ctrl-group';
+
+const map = new maplibregl.Map({
+  container: "map",
+  center: [139.7690, 35.6804],
+  zoom: 10,
+  style: getStyle(),
+  hash: true,
+  localIdeographFontFamily: "Noto Sans Regular",
+
+});
+
 const draw = new MapboxDraw({
   controls: {
     point: false,
@@ -24,16 +33,22 @@ const draw = new MapboxDraw({
   },
   styles: drawStyles,
 });
+
+map.addControl(new maplibregl.NavigationControl());
+map.addControl(new maplibregl.GeolocateControl());
+
 const exportControl = new ExportControl({
   dpi: 300,
-  attribution: "© Geolonia | © OpenStreetMap",
 });
-let withElevation = true;
+
+let withElevation = false;
 const switchControl = new SwitchControl({
   onClick: () => {
     withElevation = !withElevation;
     const verticeStyle = getVerticeStyle(withElevation);
-    map.removeLayer(verticeStyle.id);
+    if(map.getLayer(verticeStyle.id)) {
+      map.removeLayer(verticeStyle.id);
+    }
     map.removeLayer("app-end-circle");
     map.addLayer(verticeStyle);
     map.addLayer(endCircleStyle);
@@ -46,18 +61,16 @@ const copyUrlControl = new CopyUrlToClipboardControl({
     toggleWizard("copied", false, 3000);
   },
 });
-const communityGeocoderControl = new CommunityGeocoderControl();
 
 map.addControl(draw, "top-right");
 map.addControl(switchControl);
 map.addControl(exportControl);
 map.addControl(copyUrlControl);
-map.addControl(communityGeocoderControl, "bottom-left");
 
 map.on("load", async () => {
   const geojson = deserialize();
 
-  const download = document.querySelector("button.mapbox-gl-download");
+  const download = document.querySelector("button.maplibre-gl-download");
   download.addEventListener("click", () => toggleWizard("download", false));
   download.addEventListener("touchstart", () => {
     toggleWizard("switch", false);

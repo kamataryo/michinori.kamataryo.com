@@ -51,13 +51,6 @@ body {
   padding-top: 5px;
 }
 
-.forkme {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 999999;
-}
-
 @keyframes wizard-bounce-horizontal {
   0% {
     right: 55px;

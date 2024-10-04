@@ -1,11 +1,9 @@
-# michinori.geolonia.com
-
-![](docs/ogp.png)
+# michinori.kamataryo.com
 
 ## Development
 
 ```
-$ git clone git@github.com:geolonia/michinori.geolonia.com.git
-$ cd michinori.geolonia.com
-$ npm run build
+$ git clone git@github.com:kamataryo/michinori.kamataryo.com.git
+$ cd michinori.kamataryo.com
+$ npm run dev
 ```

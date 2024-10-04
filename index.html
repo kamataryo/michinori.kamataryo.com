@@ -18,10 +18,10 @@
       name="description"
       content="地図上のみちのりを共有するサービスです。みちのりは画像としてダウンロードしたり、 URL として共有することができます。"
     />
-    <meta property="og:url" content="https://michinori.geolonia.com/" />
+    <meta property="og:url" content="https://michinori.kamataryo.com/" />
     <meta
       property="og:title"
-      content="みちのりシェアサービス powered by Geolonia"
+      content="みちのりシェアサービス"
     />
     <meta
       property="og:description"
@@ -29,13 +29,18 @@
     />
     <meta
       property="og:image"
-      content="https://michinori.geolonia.com/ogp.png"
+      content="https://michinori.kamataryo.com/ogp.png"
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="og:type" content="website" />
-    <link rel="canonical" href="https://michinori.geolonia.com/" />
+    <link rel="canonical" href="https://michinori.kamataryo.com/" />
 
     <title>みちのりシェアサービス</title>
+    <script src="https://unpkg.com/maplibre-gl@^4.7.1/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@^4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.css' type='text/css' />
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
@@ -43,26 +48,7 @@
       <p>みちのりシェアサービス</p>
     </header>
 
-    <div
-      id="map"
-      data-marker="off"
-      data-lat="35.6804"
-      data-lng="139.7690"
-      data-zoom="10"
-      data-hash="on"
-      data-geolocate-control="on"
-      data-gesture-handling="off"
-    ></div>
-
-    <a class="forkme" href="https://github.com/geolonia/michinori.geolonia.com"
-      ><img
-        width="149"
-        height="149"
-        src="https://github.blog/wp-content/uploads/2008/12/forkme_left_red_aa0000.png?resize=149%2C149"
-        class="attachment-full size-full"
-        alt="Fork me on GitHub"
-        data-recalc-dims="1"
-    /></a>
+    <div id="map"></div>
 
     <input id="url" type="text" />
     <button id="done" type="button">
@@ -98,10 +84,6 @@
       共有URLをクリップボードにコピーしました！
     </div>
 
-    <script src="https://cdn.geolonia.com/v1/embed?geolonia-api-key=YOUR-API-KEY"></script>
-    <script src="https://cdn.geolonia.com/community-geocoder.js"></script>
-
-    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.js"></script>
     <script type="module" src="./src/index.js"></script>
   </body>
 </html>

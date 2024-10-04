@@ -143,22 +143,26 @@ export class SwitchControl {
 }
 
 export const getStyle = () => {
-  const defaultStyle = "geoloniamaps/basic-v1"
-  const styleUrl = 'https://raw.githubusercontent.com/%s/gh-pages/style.json'
-
-  let style
-
-  const styleIdentifier = new URLSearchParams(location.search).get('style')
-  if (styleIdentifier) {
-    if (styleIdentifier.match(/^https:\/\//)) {
-      style = styleIdentifier
-    } else {
-      const stylePath = styleIdentifier.split( /\// )
-      style = styleUrl.replace( '%s', stylePath.join( '/' ) )
-    }
-  } else {
-    style = styleUrl.replace( '%s', defaultStyle )
+  return {
+    "version": 8,
+    "name": "GSI Japan based style",
+    "glyphs": "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+    "sources": {
+      'gsi-photo': {
+        type: 'raster',
+        tiles: ['https://maps.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg'],
+        tileSize: 256,
+        attribution: '国土地理院 シームレス空中写真',
+      }
+    },
+    "layers": [
+      {
+        'id': 'gsi-photo',
+        'type': 'raster',
+        'source': 'gsi-photo',
+        'minzoom': 0,
+        'maxzoom': 22,
+      }
+    ]
   }
-
-  return style
 }
