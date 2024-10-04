@@ -4,17 +4,13 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "build": "rimraf docs && webpack --mode production",
-    "start": "webpack serve"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
-    "copy-webpack-plugin": "^9.0.0",
-    "css-loader": "^6.8.1",
-    "license-webpack-plugin": "^2.3.19",
     "rimraf": "^3.0.2",
-    "webpack": "^5.88.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
+    "vite": "^5.4.8"
   },
   "dependencies": {
     "@geolonia/geolonia-draw": "https://github.com/geolonia/mapbox-gl-draw",
