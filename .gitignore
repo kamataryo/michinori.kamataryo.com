@@ -64,3 +64,5 @@ typings/
 
 # use yarn
 package-lock.json
+
+dist
