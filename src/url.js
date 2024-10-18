@@ -171,7 +171,7 @@ export const getStyle = () => {
         "id": "gaze",
         "type": "symbol",
         "source": "gaze",
-        minzoom: 10,
+        minzoom: 8,
         "layout": {
           "text-field": ["get", "name"],
           "text-font": ["Open Sans Regular"],

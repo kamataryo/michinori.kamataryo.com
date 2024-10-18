@@ -20,7 +20,7 @@ const map = new maplibregl.Map({
   zoom: 10,
   style: getStyle(),
   hash: true,
-  localIdeographFontFamily: "Noto Sans Regular",
+  localIdeographFontFamily: '"Noto Sans Regular", sans-serif',
 
 });
 
@@ -36,6 +36,7 @@ const draw = new MapboxDraw({
 
 map.addControl(new maplibregl.NavigationControl());
 map.addControl(new maplibregl.GeolocateControl());
+map.addControl(new maplibregl.ScaleControl());
 
 const exportControl = new ExportControl({
   dpi: 300,
