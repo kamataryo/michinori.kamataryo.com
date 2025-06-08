@@ -174,7 +174,6 @@ export const getStyle = () => {
         minzoom: 8,
         "layout": {
           "text-field": ["get", "name"],
-          "text-font": ["Open Sans Regular"],
           "text-size": 14,
           "text-allow-overlap": false,
           "text-ignore-placement": false,

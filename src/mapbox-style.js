@@ -34,6 +34,7 @@ export const drawStyles = [
 ];
 
 export const getVerticeStyle = (withElevaition = true) => {
+  console.log("getVerticeStyle", withElevaition);
   const elevationLabelProps = withElevaition
     ? [
         " (EL.",

@@ -2,11 +2,11 @@ import { drawStyles, getVerticeStyle, endCircleStyle } from "./mapbox-style";
 import {
   serialize,
   deserialize,
-  SwitchControl,
+  // SwitchControl,
   CopyUrlToClipboardControl,
   getStyle,
 } from "./url";
-import { generateVertice } from "./util";
+import { generateVertices } from "./util";
 import { toggleWizard } from "./wizard";
 import ExportControl from "./mbgl-export-control";
 
@@ -43,18 +43,18 @@ const exportControl = new ExportControl({
 });
 
 let withElevation = false;
-const switchControl = new SwitchControl({
-  onClick: () => {
-    withElevation = !withElevation;
-    const verticeStyle = getVerticeStyle(withElevation);
-    if(map.getLayer(verticeStyle.id)) {
-      map.removeLayer(verticeStyle.id);
-    }
-    map.removeLayer("app-end-circle");
-    map.addLayer(verticeStyle);
-    map.addLayer(endCircleStyle);
-  },
-});
+// const switchControl = new SwitchControl({
+//   onClick: () => {
+//     withElevation = !withElevation;
+//     const verticeStyle = getVerticeStyle(withElevation);
+//     if(map.getLayer(verticeStyle.id)) {
+//       map.removeLayer(verticeStyle.id);
+//     }
+//     map.removeLayer("app-end-circle");
+//     map.addLayer(verticeStyle);
+//     map.addLayer(endCircleStyle);
+//   },
+// });
 const copyUrlControl = new CopyUrlToClipboardControl({
   callback: () => {
     toggleWizard("copy", false, 0);
@@ -64,7 +64,7 @@ const copyUrlControl = new CopyUrlToClipboardControl({
 });
 
 map.addControl(draw, "top-right");
-map.addControl(switchControl);
+// map.addControl(switchControl);
 map.addControl(exportControl);
 map.addControl(copyUrlControl);
 
@@ -109,7 +109,7 @@ map.on("load", async () => {
   if (geojson) {
     draw.set(geojson);
     const feature = geojson.features[0];
-    const { vertice } = await generateVertice(feature.geometry);
+    const { vertice } = await generateVertices(feature.geometry);
     setSymbols(vertice);
   }
   toggleWizard("trail", true, 1000);
@@ -129,7 +129,7 @@ map.on("load", async () => {
     toggleWizard("switch", false, 11000);
     toggleWizard("download", false, 11000);
     toggleWizard("copy", false, 11000);
-    const { vertice } = await generateVertice(feature.geometry);
+    const { vertice } = await generateVertices(feature.geometry);
     serialize(feature);
     setSymbols(vertice);
   });
@@ -138,7 +138,7 @@ map.on("load", async () => {
     if (e.action === "move" || e.action === "change_coordinates") {
       toggleWizard("trail", false);
       const feature = draw.getAll().features[0];
-      const { vertice } = await generateVertice(feature.geometry);
+      const { vertice } = await generateVertices(feature.geometry);
       serialize(feature);
       setSymbols(vertice);
     }
@@ -170,7 +170,7 @@ map.on("load", async () => {
           ...feature.geometry,
           coordinates: intermediateCoordinates,
         };
-        const { vertice } = await generateVertice(intermediateGeometry);
+        const { vertice } = await generateVertices(intermediateGeometry);
         // serialize(feature);
         setSymbols(vertice);
       }

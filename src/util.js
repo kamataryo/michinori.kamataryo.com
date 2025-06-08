@@ -2,7 +2,7 @@
  * generate Points GeoJSON for each vertex of the trail
  * @param {GeoJSON.geometry} geometry
  */
-export const generateVertice = async (geometry) => {
+export const generateVertices = async (geometry) => {
   const turf = await import("@turf/turf");
   const { coordinates } = geometry;
 
@@ -40,36 +40,36 @@ export const generateVertice = async (geometry) => {
       },
     });
   }
-  const elevationItems = await getElevations(vertice);
+  // const elevationItems = await getElevations(vertice);
 
-  elevationItems.reduce((prev, elevationItem, index) => {
-    if (elevationItem && elevationItem.elevation) {
-      const { elevation, hsrc } = elevationItem;
-      vertice.features[index].properties.elevation = elevation;
-      vertice.features[index].properties.elevation_str = `${
-        Math.round((typeof elevation === "number" ? elevation : 0) * 100) / 100
-      }m`;
-      vertice.features[index].properties.hsrc = hsrc;
-      let elevation_diff_str = "";
+  // elevationItems.reduce((prev, elevationItem, index) => {
+  //   if (elevationItem && elevationItem.elevation) {
+  //     const { elevation, hsrc } = elevationItem;
+  //     vertice.features[index].properties.elevation = elevation;
+  //     vertice.features[index].properties.elevation_str = `${
+  //       Math.round((typeof elevation === "number" ? elevation : 0) * 100) / 100
+  //     }m`;
+  //     vertice.features[index].properties.hsrc = hsrc;
+  //     let elevation_diff_str = "";
 
-      if (prev !== null) {
-        const elevation_diff = index === 0 ? 0 : elevation - prev;
-        vertice.features[index].properties.elevation_diff = elevation_diff;
-        if (elevation_diff > 0) {
-          elevation_diff_str = `(+${Math.round(elevation_diff * 100) / 100}m)`;
-        } else if (elevation_diff < 0) {
-          elevation_diff_str = `(-${
-            Math.round(Math.abs(elevation_diff) * 100) / 100
-          }m)`;
-        }
-      }
-      vertice.features[
-        index
-      ].properties.elevation_diff_str = elevation_diff_str;
-      return elevation;
-    }
-    return null;
-  }, 0);
+  //     if (prev !== null) {
+  //       const elevation_diff = index === 0 ? 0 : elevation - prev;
+  //       vertice.features[index].properties.elevation_diff = elevation_diff;
+  //       if (elevation_diff > 0) {
+  //         elevation_diff_str = `(+${Math.round(elevation_diff * 100) / 100}m)`;
+  //       } else if (elevation_diff < 0) {
+  //         elevation_diff_str = `(-${
+  //           Math.round(Math.abs(elevation_diff) * 100) / 100
+  //         }m)`;
+  //       }
+  //     }
+  //     vertice.features[
+  //       index
+  //     ].properties.elevation_diff_str = elevation_diff_str;
+  //     return elevation;
+  //   }
+  //   return null;
+  // }, 0);
 
   return { vertice };
 };
