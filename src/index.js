@@ -476,7 +476,7 @@ map.on("load", async () => {
           filter: [
             'all',
             ['in', ['geometry-type'], ['literal', ['LineString', 'MultiLineString']]],
-            ['==', ['get', 'concise'], 'ISL']
+            ['==', ['get', 'concise'], 'ISL'],
           ],
           layout: {
             'text-field': ['get', 'name'],
@@ -512,7 +512,10 @@ map.on("load", async () => {
           filter: [
             'all',
             ['!', ['in', ['geometry-type'], ['literal', ['LineString', 'MultiLineString']]]],
-            ['==', ['get', 'concise'], 'ISL']
+            ['==', ['get', 'concise'], 'ISL'],
+            ['!=', ['get', 'name'], 'Haida Gwaii'],
+            ['!=', ['get', 'name'], 'Îles de la Reine-Charlotte'],
+            ['!=', ['get', 'name'], 'Queen Charlotte Islands']
           ],
           layout: {
             'text-field': ['get', 'name'],
