@@ -246,4 +246,62 @@ map.on("load", async () => {
       }
     });
   }
+
+  // Load and display Haida GeoJSON files
+  const haidaFiles = [
+    '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    '10', '11', '12', '13', '14', '15', '16', '17', '18'
+  ];
+
+  const loadHaidaLayers = async () => {
+    for (const filename of haidaFiles) {
+      try {
+        const response = await fetch(`/additions/haida/${filename}.geojson`);
+        const geojson = await response.json();
+
+        const sourceId = `haida-${filename}`;
+        const layerId = `haida-${filename}-layer`;
+
+        map.addSource(sourceId, {
+          type: 'geojson',
+          data: geojson
+        });
+
+        map.addLayer({
+          id: layerId,
+          type: 'circle',
+          source: sourceId,
+          paint: {
+            'circle-radius': 4,
+            'circle-color': '#ff6b6b',
+            'circle-opacity': 0.7,
+            'circle-stroke-width': 1,
+            'circle-stroke-color': '#fff'
+          }
+        });
+
+        // Add labels if there's a name property
+        map.addLayer({
+          id: `${layerId}-label`,
+          type: 'symbol',
+          source: sourceId,
+          layout: {
+            'text-field': ['get', 'name'],
+            'text-size': 16,
+            'text-offset': [0, 1.5],
+            'text-anchor': 'top'
+          },
+          paint: {
+            'text-color': 'white',
+            'text-halo-color': 'black',
+            'text-halo-width': 3
+          }
+        });
+      } catch (error) {
+        console.warn(`Failed to load ${filename}.geojson:`, error);
+      }
+    }
+  };
+
+  loadHaidaLayers();
 });
