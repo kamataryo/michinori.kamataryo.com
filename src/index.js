@@ -354,7 +354,8 @@ map.on("load", async () => {
 
         map.addSource(sourceId, {
           type: 'geojson',
-          data: geojson
+          data: geojson,
+          attribution: '<a href="https://natural-resources.canada.ca/maps-tools-publications/maps/geographical-names-canada/geographical-names-canada" target="_blank">Natural Resources Canada - Geographical Names of Canada</a>'
         });
 
         // Add mountain peak icon layer
