@@ -305,6 +305,43 @@ map.on("load", async () => {
   };
 
   const loadHaidaLayers = async () => {
+    // Add source for selected polygon highlight
+    if (!map.getSource('haida-selected')) {
+      map.addSource('haida-selected', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: []
+        }
+      });
+
+      // Add highlight layer for selected polygons
+      map.addLayer({
+        id: 'haida-selected-outline',
+        type: 'line',
+        source: 'haida-selected',
+        paint: {
+          'line-color': '#FFFF99',
+          'line-width': 3,
+          'line-opacity': 0.8
+        }
+      });
+    }
+
+    // Add mountain peak icon
+    const mountainPeakSvg = `
+      <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 6 L26 26 L6 26 Z" fill="${conciseColorMap['MTN']}" stroke="#fff" stroke-width="2"/>
+      </svg>
+    `;
+    const mountainPeakImage = new Image(32, 32);
+    mountainPeakImage.onload = () => {
+      if (!map.hasImage('mountain-peak')) {
+        map.addImage('mountain-peak', mountainPeakImage);
+      }
+    };
+    mountainPeakImage.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(mountainPeakSvg);
+
     for (const filename of haidaFiles) {
       try {
         const response = await fetch(`/additions/haida/${filename}.geojson`);
@@ -317,18 +354,50 @@ map.on("load", async () => {
           data: geojson
         });
 
-        // Add point/multipoint layer (for specific locations)
+        // Add mountain peak icon layer
+        map.addLayer({
+          id: `${sourceId}-mountain`,
+          type: 'symbol',
+          source: sourceId,
+          minzoom: 10,
+          filter: [
+            'all',
+            ['in', ['geometry-type'], ['literal', ['Point', 'MultiPoint']]],
+            ['==', ['get', 'concise'], 'MTN']
+          ],
+          layout: {
+            'icon-image': 'mountain-peak',
+            'icon-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              10, 0.5,
+              12, 0.7,
+              16, 1.0
+            ],
+            'icon-allow-overlap': true
+          }
+        });
+
+        // Add point/multipoint layer (for specific locations except mountains, bays, and channels)
         map.addLayer({
           id: `${sourceId}-circle`,
           type: 'circle',
           source: sourceId,
-          filter: ['in', ['geometry-type'], ['literal', ['Point', 'MultiPoint']]],
+          minzoom: 10,
+          filter: [
+            'all',
+            ['in', ['geometry-type'], ['literal', ['Point', 'MultiPoint']]],
+            ['!=', ['get', 'concise'], 'MTN'],
+            ['!=', ['get', 'concise'], 'BAY'],
+            ['!=', ['get', 'concise'], 'CHAN']
+          ],
           paint: {
             'circle-radius': [
               'interpolate',
               ['linear'],
               ['zoom'],
-              8, 3,
+              10, 4,
               12, 6,
               16, 10
             ],
@@ -344,16 +413,85 @@ map.on("load", async () => {
           }
         });
 
-        // Add labels for LineString/MultiLineString (along the line)
+        // Add labels for islands (ISL) - LineString/MultiLineString (from zoom 7, no offset)
         map.addLayer({
-          id: `${sourceId}-label-line`,
+          id: `${sourceId}-label-line-island`,
+          type: 'symbol',
+          source: sourceId,
+          minzoom: 7,
+          filter: [
+            'all',
+            ['in', ['geometry-type'], ['literal', ['LineString', 'MultiLineString']]],
+            ['==', ['get', 'concise'], 'ISL']
+          ],
+          layout: {
+            'text-field': ['get', 'name'],
+            'text-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              7, 10,
+              10, 12,
+              14, 16,
+              18, 20
+            ],
+            'symbol-placement': 'line',
+            'text-rotation-alignment': 'map',
+            'text-pitch-alignment': 'viewport',
+            'text-max-angle': 45,
+            'text-optional': true
+          },
+          paint: {
+            'text-color': '#ffffff',
+            'text-halo-color': conciseColorMap['ISL'],
+            'text-halo-width': 2,
+            'text-halo-blur': 1
+          }
+        });
+
+        // Add labels for islands (ISL) - other geometries (from zoom 7, no offset, center anchor)
+        map.addLayer({
+          id: `${sourceId}-label-point-island`,
+          type: 'symbol',
+          source: sourceId,
+          minzoom: 7,
+          filter: [
+            'all',
+            ['!', ['in', ['geometry-type'], ['literal', ['LineString', 'MultiLineString']]]],
+            ['==', ['get', 'concise'], 'ISL']
+          ],
+          layout: {
+            'text-field': ['get', 'name'],
+            'text-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              7, 10,
+              10, 12,
+              14, 16,
+              18, 20
+            ],
+            'text-anchor': 'center',
+            'text-optional': true
+          },
+          paint: {
+            'text-color': '#ffffff',
+            'text-halo-color': conciseColorMap['ISL'],
+            'text-halo-width': 2,
+            'text-halo-blur': 1
+          }
+        });
+
+        // Add labels for BAY, CHAN - LineString/MultiLineString (no offset)
+        map.addLayer({
+          id: `${sourceId}-label-line-no-circle`,
           type: 'symbol',
           source: sourceId,
           minzoom: 10,
           filter: [
             'all',
             ['in', ['geometry-type'], ['literal', ['LineString', 'MultiLineString']]],
-            ['!=', ['get', 'concise'], 'PARK']
+            ['in', ['get', 'concise'], ['literal', ['BAY', 'CHAN']]]
           ],
           layout: {
             'text-field': ['get', 'name'],
@@ -384,16 +522,16 @@ map.on("load", async () => {
           }
         });
 
-        // Add labels for Point/MultiPoint and Polygon/MultiPolygon (above the feature)
+        // Add labels for BAY, CHAN - other geometries (no offset, center anchor)
         map.addLayer({
-          id: `${sourceId}-label-point`,
+          id: `${sourceId}-label-point-no-circle`,
           type: 'symbol',
           source: sourceId,
           minzoom: 10,
           filter: [
             'all',
             ['!', ['in', ['geometry-type'], ['literal', ['LineString', 'MultiLineString']]]],
-            ['!=', ['get', 'concise'], 'PARK']
+            ['in', ['get', 'concise'], ['literal', ['BAY', 'CHAN']]]
           ],
           layout: {
             'text-field': ['get', 'name'],
@@ -405,7 +543,126 @@ map.on("load", async () => {
               14, 16,
               18, 20
             ],
-            'text-offset': [0, 1.2],
+            'text-anchor': 'center',
+            'text-optional': true
+          },
+          paint: {
+            'text-color': '#ffffff',
+            'text-halo-color': [
+              'match',
+              ['get', 'concise'],
+              ...Object.entries(conciseColorMap).flatMap(([key, color]) => [key, color]),
+              conciseColorMap.default
+            ],
+            'text-halo-width': 2,
+            'text-halo-blur': 1
+          }
+        });
+
+        // Add labels for MTN (mountain icon, no offset, center anchor)
+        map.addLayer({
+          id: `${sourceId}-label-mountain`,
+          type: 'symbol',
+          source: sourceId,
+          minzoom: 10,
+          filter: [
+            'all',
+            ['in', ['geometry-type'], ['literal', ['Point', 'MultiPoint']]],
+            ['==', ['get', 'concise'], 'MTN']
+          ],
+          layout: {
+            'text-field': ['get', 'name'],
+            'text-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              10, 12,
+              14, 16,
+              18, 20
+            ],
+            'text-anchor': 'top',
+            'text-offset': [0, 0.7],
+            'text-optional': true
+          },
+          paint: {
+            'text-color': '#ffffff',
+            'text-halo-color': conciseColorMap['MTN'],
+            'text-halo-width': 2,
+            'text-halo-blur': 1
+          }
+        });
+
+        // Add labels for LineString/MultiLineString (along the line) - with circles
+        map.addLayer({
+          id: `${sourceId}-label-line`,
+          type: 'symbol',
+          source: sourceId,
+          minzoom: 10,
+          filter: [
+            'all',
+            ['in', ['geometry-type'], ['literal', ['LineString', 'MultiLineString']]],
+            ['!=', ['get', 'concise'], 'PARK'],
+            ['!=', ['get', 'concise'], 'PROV'],
+            ['!=', ['get', 'concise'], 'ISL'],
+            ['!=', ['get', 'concise'], 'BAY'],
+            ['!=', ['get', 'concise'], 'CHAN']
+          ],
+          layout: {
+            'text-field': ['get', 'name'],
+            'text-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              10, 12,
+              14, 16,
+              18, 20
+            ],
+            'symbol-placement': 'line',
+            'text-rotation-alignment': 'map',
+            'text-pitch-alignment': 'viewport',
+            'text-max-angle': 45,
+            'text-optional': true
+          },
+          paint: {
+            'text-color': '#ffffff',
+            'text-halo-color': [
+              'match',
+              ['get', 'concise'],
+              ...Object.entries(conciseColorMap).flatMap(([key, color]) => [key, color]),
+              conciseColorMap.default
+            ],
+            'text-halo-width': 2,
+            'text-halo-blur': 1
+          }
+        });
+
+        // Add labels for Point/MultiPoint and Polygon/MultiPolygon (with circles)
+        map.addLayer({
+          id: `${sourceId}-label-point`,
+          type: 'symbol',
+          source: sourceId,
+          minzoom: 10,
+          filter: [
+            'all',
+            ['!', ['in', ['geometry-type'], ['literal', ['LineString', 'MultiLineString']]]],
+            ['!=', ['get', 'concise'], 'PARK'],
+            ['!=', ['get', 'concise'], 'PROV'],
+            ['!=', ['get', 'concise'], 'ISL'],
+            ['!=', ['get', 'concise'], 'BAY'],
+            ['!=', ['get', 'concise'], 'CHAN'],
+            ['!=', ['get', 'concise'], 'MTN']
+          ],
+          layout: {
+            'text-field': ['get', 'name'],
+            'text-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              10, 12,
+              14, 16,
+              18, 20
+            ],
+            'text-offset': [0, 0.7],
             'text-anchor': 'top',
             'text-optional': true
           },
@@ -428,7 +685,16 @@ map.on("load", async () => {
           const props = feature.properties;
           const conciseType = props.concise || 'N/A';
           const conciseJapanese = conciseNameMap[conciseType] || conciseType;
-          new maplibregl.Popup()
+
+          // Highlight polygon if clicked
+          if (feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon') {
+            map.getSource('haida-selected').setData({
+              type: 'FeatureCollection',
+              features: [feature]
+            });
+          }
+
+          const popup = new maplibregl.Popup()
             .setLngLat(e.lngLat)
             .setHTML(`
               <strong>${props.name || 'Unknown'}</strong><br/>
@@ -436,11 +702,32 @@ map.on("load", async () => {
               ${props.location ? `場所: ${props.location}<br/>` : ''}
             `)
             .addTo(map);
+
+          // Clear highlight when popup is closed
+          popup.on('close', () => {
+            map.getSource('haida-selected').setData({
+              type: 'FeatureCollection',
+              features: []
+            });
+          });
         };
 
-        map.on('click', `${sourceId}-circle`, showPopup);
-        map.on('click', `${sourceId}-label-line`, showPopup);
-        map.on('click', `${sourceId}-label-point`, showPopup);
+        // Add click events for all layers
+        const layerIds = [
+          `${sourceId}-mountain`,
+          `${sourceId}-circle`,
+          `${sourceId}-label-line`,
+          `${sourceId}-label-point`,
+          `${sourceId}-label-line-island`,
+          `${sourceId}-label-point-island`,
+          `${sourceId}-label-line-no-circle`,
+          `${sourceId}-label-point-no-circle`,
+          `${sourceId}-label-mountain`
+        ];
+
+        layerIds.forEach(layerId => {
+          map.on('click', layerId, showPopup);
+        });
 
         // Change cursor on hover
         const setCursorPointer = () => {
@@ -450,12 +737,10 @@ map.on("load", async () => {
           map.getCanvas().style.cursor = '';
         };
 
-        map.on('mouseenter', `${sourceId}-circle`, setCursorPointer);
-        map.on('mouseleave', `${sourceId}-circle`, setCursorDefault);
-        map.on('mouseenter', `${sourceId}-label-line`, setCursorPointer);
-        map.on('mouseleave', `${sourceId}-label-line`, setCursorDefault);
-        map.on('mouseenter', `${sourceId}-label-point`, setCursorPointer);
-        map.on('mouseleave', `${sourceId}-label-point`, setCursorDefault);
+        layerIds.forEach(layerId => {
+          map.on('mouseenter', layerId, setCursorPointer);
+          map.on('mouseleave', layerId, setCursorDefault);
+        });
 
       } catch (error) {
         console.warn(`Failed to load ${filename}.geojson:`, error);
