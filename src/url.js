@@ -1,3 +1,5 @@
+import { getStyleForBasemap, DEFAULT_BASEMAP } from './basemaps.js'
+
 const searchParams = new URLSearchParams(window.location.search);
 const input = document.getElementById("url");
 
@@ -142,48 +144,33 @@ export class SwitchControl {
   }
 }
 
-export const getStyle = () => {
-  return {
-    "version": 8,
-    "name": "GSI Japan based style",
-    "glyphs": "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
-    "sources": {
-      'gsi-photo': {
-        type: 'raster',
-        tiles: ['https://maps.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg'],
-        tileSize: 256,
-        attribution: '国土地理院 シームレス空中写真',
-      },
-      "gaze": {
-        type: "geojson",
-        data: "https://kamataryo.github.io/gazetteer-of-japan/gaze.geojson",
-      }
-    },
-    "layers": [
-      {
-        'id': 'gsi-photo',
-        'type': 'raster',
-        'source': 'gsi-photo',
-        'minzoom': 0,
-        'maxzoom': 22,
-      },
-      {
-        "id": "gaze",
-        "type": "symbol",
-        "source": "gaze",
-        minzoom: 8,
-        "layout": {
-          "text-field": ["get", "name"],
-          "text-size": 14,
-          "text-allow-overlap": false,
-          "text-ignore-placement": false,
-        },
-        "paint": {
-          "text-color": "white",
-          "text-halo-color": "black",
-          "text-halo-width": 1,
-        },
-      }
-    ]
-  }
+/**
+ * Get MapLibre style for a specific basemap
+ * @param {string} basemapId - The basemap ID (defaults to DEFAULT_BASEMAP)
+ * @returns {object} MapLibre style specification
+ */
+export const getStyle = (basemapId) => {
+  return getStyleForBasemap(basemapId || DEFAULT_BASEMAP)
+}
+
+/**
+ * Get basemap ID from URL query parameter
+ * @returns {string|null} The basemap ID from URL, or null if not present
+ */
+export const getBasemapFromUrl = () => {
+  return searchParams.get('basemap') || null
+}
+
+/**
+ * Set basemap ID to URL query parameter
+ * @param {string} basemapId - The basemap ID to set in URL
+ */
+export const setBasemapToUrl = (basemapId) => {
+  searchParams.set('basemap', basemapId)
+  window.history.replaceState(
+    {},
+    '',
+    `?${searchParams.toString()}${window.location.hash}`
+  )
+  input.value = window.location.href
 }

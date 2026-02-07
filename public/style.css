@@ -115,3 +115,32 @@ body {
 #wizard-copied:before {
   display: none;
 }
+
+/* Basemap selector control */
+.basemap-select {
+  background-color: #fff;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 4px;
+  outline: none;
+}
+
+.basemap-select:hover {
+  background-color: #f0f0f0;
+}
+
+.basemap-select:focus {
+  outline: 2px solid #e74230;
+  outline-offset: 2px;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .basemap-select {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+}

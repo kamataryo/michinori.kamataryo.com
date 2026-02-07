@@ -5,20 +5,29 @@ import {
   // SwitchControl,
   CopyUrlToClipboardControl,
   getStyle,
+  getBasemapFromUrl,
+  setBasemapToUrl,
 } from "./url";
 import { generateVertices } from "./util";
 import { toggleWizard } from "./wizard";
 import ExportControl from "./mbgl-export-control";
+import { BasemapControl } from "./basemap-control";
+import { DEFAULT_BASEMAP } from "./basemaps";
 
 MapboxDraw.constants.classes.CONTROL_BASE  = 'maplibregl-ctrl';
 MapboxDraw.constants.classes.CONTROL_PREFIX = 'maplibregl-ctrl-';
 MapboxDraw.constants.classes.CONTROL_GROUP = 'maplibregl-ctrl-group';
 
+// Determine initial basemap: URL > localStorage > default
+const urlBasemap = getBasemapFromUrl();
+const storedBasemap = localStorage.getItem('preferredBasemap');
+const initialBasemap = urlBasemap || storedBasemap || DEFAULT_BASEMAP;
+
 const map = new maplibregl.Map({
   container: "map",
   center: [139.7690, 35.6804],
   zoom: 10,
-  style: getStyle(),
+  style: getStyle(initialBasemap),
   hash: true,
   localIdeographFontFamily: '"Noto Sans Regular", sans-serif',
 
@@ -63,7 +72,51 @@ const copyUrlControl = new CopyUrlToClipboardControl({
   },
 });
 
+const basemapControl = new BasemapControl({
+  initialBasemap: initialBasemap,
+  onBasemapChange: (newBasemapId) => {
+    const newStyle = getStyle(newBasemapId);
+
+    // Save current draw data and vertice data
+    const currentDrawData = draw.getAll();
+    const hasDrawData = currentDrawData.features.length > 0;
+
+    // Save current vertice source data if it exists
+    let currentVerticeData = null;
+    const verticeSource = map.getSource('app-vertice');
+    if (verticeSource) {
+      currentVerticeData = verticeSource._data;
+    }
+
+    // Update style
+    map.setStyle(newStyle);
+
+    // Restore data after style loads
+    map.once('style.load', () => {
+      // Restore draw data
+      if (hasDrawData) {
+        draw.set(currentDrawData);
+      }
+
+      // Restore vertice symbols
+      if (currentVerticeData) {
+        map.addSource('app-vertice', {
+          type: 'geojson',
+          data: currentVerticeData,
+        });
+        const verticeStyle = getVerticeStyle(withElevation);
+        map.addLayer(verticeStyle);
+        map.addLayer(endCircleStyle);
+      }
+    });
+
+    // Update URL
+    setBasemapToUrl(newBasemapId);
+  },
+});
+
 map.addControl(draw, "top-right");
+map.addControl(basemapControl, "top-left");
 // map.addControl(switchControl);
 map.addControl(exportControl);
 map.addControl(copyUrlControl);
