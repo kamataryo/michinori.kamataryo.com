@@ -304,6 +304,9 @@ map.on("load", async () => {
     'PLN': '平野'
   };
 
+  // Track current popup to manage highlight correctly
+  let currentHaidaPopup = null;
+
   const loadHaidaLayers = async () => {
     // Add source for selected polygon highlight
     if (!map.getSource('haida-selected')) {
@@ -681,6 +684,12 @@ map.on("load", async () => {
 
         // Add popup on click for all layers
         const showPopup = (e) => {
+          // Remove event listener from previous popup before closing
+          if (currentHaidaPopup) {
+            currentHaidaPopup.off('close');
+            currentHaidaPopup.remove();
+          }
+
           const feature = e.features[0];
           const props = feature.properties;
           const conciseType = props.concise || 'N/A';
@@ -694,7 +703,7 @@ map.on("load", async () => {
             });
           }
 
-          const popup = new maplibregl.Popup()
+          currentHaidaPopup = new maplibregl.Popup()
             .setLngLat(e.lngLat)
             .setHTML(`
               <strong>${props.name || 'Unknown'}</strong><br/>
@@ -704,11 +713,12 @@ map.on("load", async () => {
             .addTo(map);
 
           // Clear highlight when popup is closed
-          popup.on('close', () => {
+          currentHaidaPopup.on('close', () => {
             map.getSource('haida-selected').setData({
               type: 'FeatureCollection',
               features: []
             });
+            currentHaidaPopup = null;
           });
         };
 
@@ -748,5 +758,11 @@ map.on("load", async () => {
     }
   };
 
-  loadHaidaLayers();
+  // Load Haida layers only if haida=true query parameter is present
+  const urlParams = new URLSearchParams(window.location.search);
+  const shouldLoadHaida = urlParams.get('haida') === 'true';
+
+  if (shouldLoadHaida) {
+    loadHaidaLayers();
+  }
 });
