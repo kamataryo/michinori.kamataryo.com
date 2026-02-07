@@ -383,6 +383,56 @@ map.on("load", async () => {
           }
         });
 
+        // Add wider transparent line for better click area (RIV)
+        map.addLayer({
+          id: `${sourceId}-river-line-hitarea`,
+          type: 'line',
+          source: sourceId,
+          minzoom: 10,
+          filter: [
+            'all',
+            ['in', ['geometry-type'], ['literal', ['LineString', 'MultiLineString']]],
+            ['==', ['get', 'concise'], 'RIV']
+          ],
+          paint: {
+            'line-color': conciseColorMap['RIV'],
+            'line-width': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              10, 10,
+              14, 15,
+              18, 20
+            ],
+            'line-opacity': 0
+          }
+        });
+
+        // Add visible line layer for RIV (rivers)
+        map.addLayer({
+          id: `${sourceId}-river-line`,
+          type: 'line',
+          source: sourceId,
+          minzoom: 10,
+          filter: [
+            'all',
+            ['in', ['geometry-type'], ['literal', ['LineString', 'MultiLineString']]],
+            ['==', ['get', 'concise'], 'RIV']
+          ],
+          paint: {
+            'line-color': conciseColorMap['RIV'],
+            'line-width': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              10, 1,
+              14, 2,
+              18, 3
+            ],
+            'line-opacity': 0.7
+          }
+        });
+
         // Add point/multipoint layer (for specific locations except mountains, bays, and channels)
         map.addLayer({
           id: `${sourceId}-circle`,
@@ -401,9 +451,9 @@ map.on("load", async () => {
               'interpolate',
               ['linear'],
               ['zoom'],
-              10, 4,
-              12, 6,
-              16, 10
+              10, 2,
+              12, 3,
+              16, 4
             ],
             'circle-color': [
               'match',
@@ -666,7 +716,7 @@ map.on("load", async () => {
               14, 16,
               18, 20
             ],
-            'text-offset': [0, 0.7],
+            'text-offset': [0, 0.3],
             'text-anchor': 'top',
             'text-optional': true
           },
@@ -725,6 +775,8 @@ map.on("load", async () => {
 
         // Add click events for all layers
         const layerIds = [
+          `${sourceId}-river-line-hitarea`,
+          `${sourceId}-river-line`,
           `${sourceId}-mountain`,
           `${sourceId}-circle`,
           `${sourceId}-label-line`,
