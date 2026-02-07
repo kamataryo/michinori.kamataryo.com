@@ -253,6 +253,57 @@ map.on("load", async () => {
     '10', '11', '12', '13', '14', '15', '16', '17', '18'
   ];
 
+  // Color mapping based on concise property (geographical feature type)
+  const conciseColorMap = {
+    'ISL': '#3498db',    // Island - Blue
+    'MTN': '#8B4513',    // Mountain - Brown
+    'BAY': '#00CED1',    // Bay - Turquoise
+    'CAPE': '#FF8C00',   // Cape - Dark Orange
+    'CHAN': '#1E90FF',   // Channel - Dodger Blue
+    'RIV': '#4169E1',    // River - Royal Blue
+    'RIVF': '#4682B4',   // River Feature - Steel Blue
+    'LAKE': '#87CEEB',   // Lake - Sky Blue
+    'BCH': '#F4A460',    // Beach - Sandy Brown
+    'CLF': '#696969',    // Cliff - Dim Gray
+    'SHL': '#FFD700',    // Shoal - Gold
+    'SEAU': '#FFA500',   // Sea Feature - Orange
+    'PARK': '#228B22',   // Park - Forest Green
+    'VEGL': '#32CD32',   // Vegetation - Lime Green
+    'UNP': '#DC143C',    // Unpopulated - Crimson
+    'VILG': '#FF6347',   // Village - Tomato
+    'MUN1': '#FF4500',   // Municipality - Orange Red
+    'IR': '#8B008B',     // Indian Reserve - Dark Magenta
+    'PROV': '#800080',   // Province - Purple
+    'MIL': '#B22222',    // Military - Fire Brick
+    'PLN': '#ADFF2F',    // Plain - Green Yellow
+    'default': '#999999' // Default gray for unknown types
+  };
+
+  // Japanese translation for concise types
+  const conciseNameMap = {
+    'ISL': '島',
+    'MTN': '山',
+    'BAY': '湾',
+    'CAPE': '岬',
+    'CHAN': '水路',
+    'RIV': '川',
+    'RIVF': '河川地形',
+    'LAKE': '湖',
+    'BCH': '海岸',
+    'CLF': '崖',
+    'SHL': '浅瀬',
+    'SEAU': '海洋地形',
+    'PARK': '公園',
+    'VEGL': '植生',
+    'UNP': '無人地域',
+    'VILG': '村',
+    'MUN1': '自治体',
+    'IR': '先住民居留地',
+    'PROV': '州',
+    'MIL': '軍事施設',
+    'PLN': '平野'
+  };
+
   const loadHaidaLayers = async () => {
     for (const filename of haidaFiles) {
       try {
@@ -260,43 +311,152 @@ map.on("load", async () => {
         const geojson = await response.json();
 
         const sourceId = `haida-${filename}`;
-        const layerId = `haida-${filename}-layer`;
 
         map.addSource(sourceId, {
           type: 'geojson',
           data: geojson
         });
 
+        // Add point/multipoint layer (for specific locations)
         map.addLayer({
-          id: layerId,
+          id: `${sourceId}-circle`,
           type: 'circle',
           source: sourceId,
+          filter: ['in', ['geometry-type'], ['literal', ['Point', 'MultiPoint']]],
           paint: {
-            'circle-radius': 4,
-            'circle-color': '#ff6b6b',
-            'circle-opacity': 0.7,
+            'circle-radius': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              8, 3,
+              12, 6,
+              16, 10
+            ],
+            'circle-color': [
+              'match',
+              ['get', 'concise'],
+              ...Object.entries(conciseColorMap).flatMap(([key, color]) => [key, color]),
+              conciseColorMap.default
+            ],
+            'circle-opacity': 0.8,
             'circle-stroke-width': 1,
             'circle-stroke-color': '#fff'
           }
         });
 
-        // Add labels if there's a name property
+        // Add labels for LineString/MultiLineString (along the line)
         map.addLayer({
-          id: `${layerId}-label`,
+          id: `${sourceId}-label-line`,
           type: 'symbol',
           source: sourceId,
+          minzoom: 10,
+          filter: [
+            'all',
+            ['in', ['geometry-type'], ['literal', ['LineString', 'MultiLineString']]],
+            ['!=', ['get', 'concise'], 'PARK']
+          ],
           layout: {
             'text-field': ['get', 'name'],
-            'text-size': 16,
-            'text-offset': [0, 1.5],
-            'text-anchor': 'top'
+            'text-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              10, 12,
+              14, 16,
+              18, 20
+            ],
+            'symbol-placement': 'line',
+            'text-rotation-alignment': 'map',
+            'text-pitch-alignment': 'viewport',
+            'text-max-angle': 45,
+            'text-optional': true
           },
           paint: {
-            'text-color': 'white',
-            'text-halo-color': 'black',
-            'text-halo-width': 3
+            'text-color': '#ffffff',
+            'text-halo-color': [
+              'match',
+              ['get', 'concise'],
+              ...Object.entries(conciseColorMap).flatMap(([key, color]) => [key, color]),
+              conciseColorMap.default
+            ],
+            'text-halo-width': 2,
+            'text-halo-blur': 1
           }
         });
+
+        // Add labels for Point/MultiPoint and Polygon/MultiPolygon (above the feature)
+        map.addLayer({
+          id: `${sourceId}-label-point`,
+          type: 'symbol',
+          source: sourceId,
+          minzoom: 10,
+          filter: [
+            'all',
+            ['!', ['in', ['geometry-type'], ['literal', ['LineString', 'MultiLineString']]]],
+            ['!=', ['get', 'concise'], 'PARK']
+          ],
+          layout: {
+            'text-field': ['get', 'name'],
+            'text-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              10, 12,
+              14, 16,
+              18, 20
+            ],
+            'text-offset': [0, 1.2],
+            'text-anchor': 'top',
+            'text-optional': true
+          },
+          paint: {
+            'text-color': '#ffffff',
+            'text-halo-color': [
+              'match',
+              ['get', 'concise'],
+              ...Object.entries(conciseColorMap).flatMap(([key, color]) => [key, color]),
+              conciseColorMap.default
+            ],
+            'text-halo-width': 2,
+            'text-halo-blur': 1
+          }
+        });
+
+        // Add popup on click for all layers
+        const showPopup = (e) => {
+          const feature = e.features[0];
+          const props = feature.properties;
+          const conciseType = props.concise || 'N/A';
+          const conciseJapanese = conciseNameMap[conciseType] || conciseType;
+          new maplibregl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(`
+              <strong>${props.name || 'Unknown'}</strong><br/>
+              種別: ${conciseJapanese} (${conciseType})<br/>
+              ${props.location ? `場所: ${props.location}<br/>` : ''}
+            `)
+            .addTo(map);
+        };
+
+        map.on('click', `${sourceId}-circle`, showPopup);
+        map.on('click', `${sourceId}-label-line`, showPopup);
+        map.on('click', `${sourceId}-label-point`, showPopup);
+
+        // Change cursor on hover
+        const setCursorPointer = () => {
+          map.getCanvas().style.cursor = 'pointer';
+        };
+        const setCursorDefault = () => {
+          map.getCanvas().style.cursor = '';
+        };
+
+        map.on('mouseenter', `${sourceId}-circle`, setCursorPointer);
+        map.on('mouseleave', `${sourceId}-circle`, setCursorDefault);
+        map.on('mouseenter', `${sourceId}-label-line`, setCursorPointer);
+        map.on('mouseleave', `${sourceId}-label-line`, setCursorDefault);
+        map.on('mouseenter', `${sourceId}-label-point`, setCursorPointer);
+        map.on('mouseleave', `${sourceId}-label-point`, setCursorDefault);
+
       } catch (error) {
         console.warn(`Failed to load ${filename}.geojson:`, error);
       }
