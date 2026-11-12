@@ -52,7 +52,8 @@ export default class ExportControl {
     const btn = document.createElement('button')
     btn.className = 'maplibregl-ctrl-icon maplibre-gl-download'
     btn.type = "button"
-    btn.setAttribute("aria-label", "Download")
+    btn.setAttribute("aria-label", "地図を画像でダウンロード")
+    btn.title = "地図を画像でダウンロード"
     btn.innerHTML = download
 
     this.container.appendChild(btn)
@@ -102,14 +103,11 @@ export default class ExportControl {
         attributionControl: false,
       })
 
-      _map.once('load', () => {
-        setTimeout(() => {          console.log(2)
+      _map.once('idle', () => {
           _map.getCanvas().toBlob(async (blob) => {
             if(blob) {
-              console.log(4, this.options.callback)
               const transformed = await this.options.callback(blob)
-              console.log(5)
-              FileSaver.saveAs(transformed, `${_map.getCenter().toArray().join('-')}.png`)
+              FileSaver.saveAs(transformed, `michinori.png`)
             }
             _map.remove()
             if(_container.parentNode) {
@@ -122,7 +120,6 @@ export default class ExportControl {
               get: () => actualPixelRatio
             });
         })
-        }, 3000)
       })
 
 

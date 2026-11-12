@@ -10,14 +10,29 @@ const input = document.getElementById("url");
 export const serialize = (feature) => {
   searchParams.set(
     "g",
-    feature.geometry.coordinates.map((coord) => coord.join(",")).join(";")
+    feature.geometry.coordinates
+      // 小数 6 桁（約 10cm）で十分。URL が短くなる
+      .map((coord) => coord.map((num) => +num.toFixed(6)).join(","))
+      .join(";")
   );
   window.history.replaceState(
     {},
     "",
     `?${searchParams.toString()}${window.location.hash}`
   );
-  input.value = window.location.href;
+};
+
+/**
+ * remove the trail from url
+ */
+export const clearGeometry = () => {
+  searchParams.delete("g");
+  const query = searchParams.toString();
+  window.history.replaceState(
+    {},
+    "",
+    `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`
+  );
 };
 
 /**
@@ -25,37 +40,29 @@ export const serialize = (feature) => {
  * @return {GeoJSON.Feature<GeoJSON.Geometry.LineString>}
  */
 export const deserialize = () => {
-  input.value = window.location.href;
-  let coordinates;
-  const serializedValue = searchParams.get("g");
-  if (!serializedValue) {
+  // 壊れた座標（空・数値でない・緯度が範囲外）は捨てる
+  const coordinates = (searchParams.get("g") || "")
+    .split(";")
+    .map((coord) => coord.split(",").map(Number))
+    .filter(
+      (coord) =>
+        coord.length >= 2 &&
+        coord.every(Number.isFinite) &&
+        Math.abs(coord[1]) <= 90
+    );
+  if (coordinates.length < 2) {
     return;
   }
-  try {
-    coordinates = serializedValue
-      .split(";")
-      .map((coord) => coord.split(",").map((num) => parseFloat(num)));
-  } catch (error) {
-    console.error(error);
-  }
-  if (coordinates) {
-    const geometry = { type: "LineString", coordinates };
-    try {
-      return {
-        type: "FeatureCollection",
-        features: [
-          {
-            type: "Feature",
-            properties: {},
-            geometry,
-          },
-        ],
-      };
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
-  }
+  return {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: {},
+        geometry: { type: "LineString", coordinates },
+      },
+    ],
+  };
 };
 
 const linkIcon = `<?xml version="1.0" encoding="UTF-8"?>
@@ -85,11 +92,14 @@ export class CopyUrlToClipboardControl {
     button.style.justifyContent = "center";
     button.style.alignItems = "center";
     button.type = "button";
-    button.setAttribute("aria-label", "copy url to clipboard");
+    button.setAttribute("aria-label", "共有URLをコピー");
+    button.title = "共有URLをコピー";
     button.innerHTML = linkIcon;
     this.container.appendChild(button);
 
     const onClickHandler = () => {
+      // 地図を動かすとハッシュが変わるので、コピーの直前に今の URL を入れる
+      input.value = window.location.href;
       input.select();
       input.setSelectionRange(0, 99999);
       document.execCommand("copy");
@@ -172,5 +182,4 @@ export const setBasemapToUrl = (basemapId) => {
     '',
     `?${searchParams.toString()}${window.location.hash}`
   )
-  input.value = window.location.href
 }

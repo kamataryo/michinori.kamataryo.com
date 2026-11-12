@@ -9,11 +9,6 @@
     <link rel="icon" href="icon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
     <link rel="manifest" href="manifest.json" />
-    <link
-      rel="stylesheet"
-      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css"
-      type="text/css"
-    />
     <meta
       name="description"
       content="地図上のみちのりを共有するサービスです。みちのりは画像としてダウンロードしたり、 URL として共有することができます。"
@@ -45,7 +40,7 @@
   </head>
   <body>
     <header id="header">
-      <p>みちのりシェアサービス</p>
+      <h1>みちのりシェアサービス</h1>
     </header>
 
     <div id="map"></div>
@@ -77,7 +72,9 @@
       </svg>
     </button>
     <div id="wizard-trail" class="wizard">みちのりを作成</div>
-    <div id="wizard-switch" class="wizard">標高表示の変更</div>
+    <div id="wizard-drawing" class="wizard">
+      クリックで点を追加、ダブルクリックで完了
+    </div>
     <div id="wizard-download" class="wizard">地図をダウンロード</div>
     <div id="wizard-copy" class="wizard">共有</div>
     <div id="wizard-copied" class="wizard">

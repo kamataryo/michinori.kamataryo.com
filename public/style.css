@@ -10,20 +10,41 @@ body {
 
 #map {
   width: 100%;
-  height: calc(100% - 32px);
+  /* ヘッダーは 32px + 下線 1px */
+  height: calc(100% - 33px);
   padding: 0;
   margin: 0;
+  /* 地図を傾けたときに地平線の上に見える空の色 */
+  background-color: #cfe3f5;
 }
 
 #header {
   border-bottom: 1px solid black;
 }
 
-#header p {
+#header h1 {
   margin: 0 16px;
   padding: 0;
+  font-size: 1rem;
+  font-weight: normal;
   line-height: 32px;
   text-align: right;
+}
+
+/* mapbox-gl-draw の CSS は .mapboxgl-* 向けなので、MapLibre のクラス名に合わせて補う */
+.maplibregl-map.mouse-pointer .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: pointer;
+}
+.maplibregl-map.mouse-move .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: move;
+}
+.maplibregl-map.mouse-add .maplibregl-canvas-container.maplibregl-interactive {
+  cursor: crosshair;
+}
+
+/* 描画モード中のボタンをはっきり見せる */
+.maplibregl-ctrl-group button.mapbox-gl-draw_ctrl-draw-btn.active {
+  background-color: #f9c9c3;
 }
 
 #url {
@@ -91,29 +112,30 @@ body {
   border-left: 7px solid #e74230;
 }
 
-#wizard-trail {
-  top: 178px;
+/* 各ボタンの縦位置に合わせる（描画 179px / ダウンロード 246px / 共有 285px、高さ 29px） */
+#wizard-trail,
+#wizard-drawing {
+  top: 180px;
 }
 
-#wizard-switch {
-  top: 245px;
+#wizard-drawing {
+  animation: none;
 }
 
 #wizard-download {
-  top: 285px;
+  top: 247px;
 }
 
 #wizard-copy {
-  top: 325px;
+  top: 286px;
 }
 #wizard-copied {
-  top: 325px;
+  top: 286px;
   background-color: #4230e7;
   animation: none;
-  margin-left: 20px;
 }
 #wizard-copied:before {
-  display: none;
+  border-left-color: #4230e7;
 }
 
 /* Basemap selector control */

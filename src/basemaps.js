@@ -33,10 +33,32 @@ export const basemaps = {
     tileSize: 256,
     attribution: '© OpenStreetMap contributors',
     maxzoom: 19,
+    // タイル自体に地名が入っているので、地名レイヤーは重ねない
+    hasLabels: true,
   },
 }
 
 export const DEFAULT_BASEMAP = 'gsi-photo'
+
+/**
+ * Generate MapLibre GL raster source for a given basemap
+ * @param {string} basemapId - The ID of the basemap to use
+ * @returns {object} MapLibre GL source specification
+ */
+export function getBasemapSource(basemapId) {
+  const { type, tiles, tileSize, attribution, maxzoom } =
+    basemaps[basemapId] || basemaps[DEFAULT_BASEMAP]
+  return { type, tiles, tileSize, attribution, maxzoom }
+}
+
+/**
+ * Visibility of the place name layer for a given basemap
+ * @param {string} basemapId - The ID of the basemap to use
+ * @returns {'visible' | 'none'}
+ */
+export function getGazeVisibility(basemapId) {
+  return basemaps[basemapId]?.hasLabels ? 'none' : 'visible'
+}
 
 /**
  * Generate MapLibre GL style object for a given basemap
@@ -51,13 +73,7 @@ export function getStyleForBasemap(basemapId) {
     name: `Style with ${basemap.name}`,
     glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
     sources: {
-      basemap: {
-        type: basemap.type,
-        tiles: basemap.tiles,
-        tileSize: basemap.tileSize,
-        attribution: basemap.attribution,
-        maxzoom: basemap.maxzoom,
-      },
+      basemap: getBasemapSource(basemapId),
       gaze: {
         type: 'geojson',
         data: 'https://kamataryo.github.io/gazetteer-of-japan/gaze.geojson',
@@ -75,6 +91,7 @@ export function getStyleForBasemap(basemapId) {
         source: 'gaze',
         minzoom: 8,
         layout: {
+          visibility: getGazeVisibility(basemapId),
           'text-field': '{name}',
           'text-font': ['Noto Sans Regular'],
           'text-size': 12,

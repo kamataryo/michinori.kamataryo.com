@@ -7,12 +7,17 @@ import {
   getStyle,
   getBasemapFromUrl,
   setBasemapToUrl,
+  clearGeometry,
 } from "./url";
 import { generateVertices } from "./util";
 import { toggleWizard } from "./wizard";
 import ExportControl from "./mbgl-export-control";
 import { BasemapControl } from "./basemap-control";
-import { DEFAULT_BASEMAP } from "./basemaps";
+import {
+  DEFAULT_BASEMAP,
+  getBasemapSource,
+  getGazeVisibility,
+} from "./basemaps";
 
 MapboxDraw.constants.classes.CONTROL_BASE  = 'maplibregl-ctrl';
 MapboxDraw.constants.classes.CONTROL_PREFIX = 'maplibregl-ctrl-';
@@ -30,7 +35,13 @@ const map = new maplibregl.Map({
   style: getStyle(initialBasemap),
   hash: true,
   localIdeographFontFamily: '"Noto Sans Regular", sans-serif',
-
+  locale: {
+    "NavigationControl.ZoomIn": "拡大",
+    "NavigationControl.ZoomOut": "縮小",
+    "NavigationControl.ResetBearing": "北を上にする",
+    "GeolocateControl.FindMyLocation": "現在地を表示",
+    "GeolocateControl.LocationNotAvailable": "現在地を取得できません",
+  },
 });
 
 const draw = new MapboxDraw({
@@ -75,40 +86,24 @@ const copyUrlControl = new CopyUrlToClipboardControl({
 const basemapControl = new BasemapControl({
   initialBasemap: initialBasemap,
   onBasemapChange: (newBasemapId) => {
-    const newStyle = getStyle(newBasemapId);
-
-    // Save current draw data and vertice data
-    const currentDrawData = draw.getAll();
-    const hasDrawData = currentDrawData.features.length > 0;
-
-    // Save current vertice source data if it exists
-    let currentVerticeData = null;
-    const verticeSource = map.getSource('app-vertice');
-    if (verticeSource) {
-      currentVerticeData = verticeSource._data;
+    if (map.getLayer("basemap-layer")) {
+      // スタイル全体を入れ替えると線やラベルが消えるので、背景のタイルだけ差し替える
+      map.removeLayer("basemap-layer");
+      map.removeSource("basemap");
+      map.addSource("basemap", getBasemapSource(newBasemapId));
+      map.addLayer(
+        { id: "basemap-layer", type: "raster", source: "basemap" },
+        "gaze"
+      );
+      map.setLayoutProperty(
+        "gaze",
+        "visibility",
+        getGazeVisibility(newBasemapId)
+      );
+    } else {
+      // 初期スタイルの読み込み前
+      map.setStyle(getStyle(newBasemapId));
     }
-
-    // Update style
-    map.setStyle(newStyle);
-
-    // Restore data after style loads
-    map.once('style.load', () => {
-      // Restore draw data
-      if (hasDrawData) {
-        draw.set(currentDrawData);
-      }
-
-      // Restore vertice symbols
-      if (currentVerticeData) {
-        map.addSource('app-vertice', {
-          type: 'geojson',
-          data: currentVerticeData,
-        });
-        const verticeStyle = getVerticeStyle(withElevation);
-        map.addLayer(verticeStyle);
-        map.addLayer(endCircleStyle);
-      }
-    });
 
     // Update URL
     setBasemapToUrl(newBasemapId);
@@ -121,51 +116,72 @@ map.addControl(basemapControl, "top-left");
 map.addControl(exportControl);
 map.addControl(copyUrlControl);
 
+const lineButton = document.querySelector(".mapbox-gl-draw_line");
+const trashButton = document.querySelector(".mapbox-gl-draw_trash");
+lineButton.title = "みちのりを描く";
+trashButton.title = "みちのりを削除";
+
+const isTouchDevice = "ontouchstart" in window;
+if (isTouchDevice) {
+  document.getElementById("wizard-drawing").textContent =
+    "タップで点を追加、✓ で完了";
+}
+
 map.on("load", async () => {
   const geojson = deserialize();
 
   const download = document.querySelector("button.maplibre-gl-download");
   download.addEventListener("click", () => toggleWizard("download", false));
   download.addEventListener("touchstart", () => {
-    toggleWizard("switch", false);
     toggleWizard("download", false);
   });
 
   /**
    * Set vertice symbol and its distance labels
-   * @param {GeoJSON} vertice
-   * @param {boolean} withElevation
+   * @param {GeoJSON | false} vertice falsy to clear
    */
   const setSymbols = (vertice) => {
-    const verticeStyle = getVerticeStyle(withElevation);
-    if (vertice) {
-      const source = map.getSource("app-vertice");
-      if (source) {
-        map.removeLayer(verticeStyle.id);
-        map.removeLayer("app-end-circle");
-        map.removeSource("app-vertice");
-      }
-      map.addSource("app-vertice", {
-        type: "geojson",
-        data: vertice,
-      });
-      map.addLayer(verticeStyle);
-      map.addLayer(endCircleStyle);
-    } else {
-      map.removeLayer(verticeStyle.id);
-      map.removeLayer("app-end-circle");
-      map.removeSource("app-vertice");
+    const data = vertice || { type: "FeatureCollection", features: [] };
+    const source = map.getSource("app-vertice");
+    if (source) {
+      source.setData(data);
+      return;
     }
+    map.addSource("app-vertice", { type: "geojson", data });
+    map.addLayer(getVerticeStyle(withElevation));
+    map.addLayer(endCircleStyle);
+  };
+
+  /**
+   * 残っている線に合わせて距離ラベルを作り直す。線がなければ消す
+   * @return {Promise<GeoJSON.Feature | undefined>} the trail
+   */
+  const syncSymbols = async () => {
+    const feature = draw.getAll().features[0];
+    setSymbols(feature && (await generateVertices(feature.geometry)).vertice);
+    return feature;
   };
 
   // initial draw
   if (geojson) {
     draw.set(geojson);
-    const feature = geojson.features[0];
-    const { vertice } = await generateVertices(feature.geometry);
-    setSymbols(vertice);
+    await syncSymbols();
+    // 共有された線が画面に収まっていなければ、収まるように動かす
+    const bounds = geojson.features[0].geometry.coordinates.reduce(
+      (acc, coord) => acc.extend(coord),
+      new maplibregl.LngLatBounds()
+    );
+    const view = map.getBounds();
+    if (
+      !view.contains(bounds.getSouthWest()) ||
+      !view.contains(bounds.getNorthEast())
+    ) {
+      // 傾いたままだと収まり方がずれるので真上からにする
+      map.fitBounds(bounds, { padding: 60, animate: false, pitch: 0 });
+    }
+  } else {
+    toggleWizard("trail", true, 1000);
   }
-  toggleWizard("trail", true, 1000);
 
   map.on("draw.create", async (e) => {
     const feature = e.features[0];
@@ -176,34 +192,64 @@ map.on("load", async () => {
     });
     toggleWizard("trail", false);
     toggleWizard("copied", false);
-    toggleWizard("switch", true, 1000);
     toggleWizard("download", true, 1000);
     toggleWizard("copy", true, 1000);
-    toggleWizard("switch", false, 11000);
     toggleWizard("download", false, 11000);
     toggleWizard("copy", false, 11000);
-    const { vertice } = await generateVertices(feature.geometry);
     serialize(feature);
-    setSymbols(vertice);
+    await syncSymbols();
   });
 
   map.on("draw.update", async (e) => {
     if (e.action === "move" || e.action === "change_coordinates") {
       toggleWizard("trail", false);
-      const feature = draw.getAll().features[0];
-      const { vertice } = await generateVertices(feature.geometry);
-      serialize(feature);
-      setSymbols(vertice);
+      const feature = await syncSymbols();
+      if (feature) {
+        serialize(feature);
+      }
     }
   });
 
-  map.on("draw.delete", () => {
+  const onTrailDeleted = () => {
     setSymbols(false);
+    clearGeometry();
     toggleWizard("copied", false);
     toggleWizard("copy", false);
-    toggleWizard("switch", false);
     toggleWizard("download", false);
     toggleWizard("trail", true, 1000);
+  };
+  map.on("draw.delete", onTrailDeleted);
+
+  // Draw 標準のゴミ箱は「線を選択中」しか効かない。
+  // 選択していなくても、頂点編集モードでも、線ごと消せるようにする。
+  // Draw のハンドラはボタン上で伝播を止めるうえ、先にモードを変えてしまうので、
+  // 親要素のキャプチャ段階で Draw より先に受ける。
+  trashButton.parentElement.addEventListener(
+    "click",
+    (e) => {
+      if (
+        !trashButton.contains(e.target) ||
+        draw.getMode() === "draw_line_string" || // 描画のキャンセルは Draw に任せる
+        draw.getSelectedPoints().features.length > 0 || // 頂点の削除は Draw に任せる
+        draw.getAll().features.length === 0
+      ) {
+        return;
+      }
+      draw.deleteAll();
+      onTrailDeleted();
+    },
+    true
+  );
+
+  // 描画をやめたとき（確定・Esc・ゴミ箱）にラベルを線に合わせ直す
+  map.on("draw.modechange", async (e) => {
+    const drawing = e.mode === "draw_line_string";
+    toggleWizard("drawing", drawing);
+    if (drawing) {
+      toggleWizard("trail", false);
+    } else if (!(await syncSymbols())) {
+      toggleWizard("trail", true);
+    }
   });
 
   map.on("click", async () => {
@@ -231,7 +277,7 @@ map.on("load", async () => {
   });
 
   // for touch device
-  if ("ontouchstart" in window) {
+  if (isTouchDevice) {
     const done = document.getElementById("done");
 
     done.addEventListener("touchstart", () => {

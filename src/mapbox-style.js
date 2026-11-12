@@ -1,4 +1,19 @@
 export const drawStyles = [
+  // 航空写真の上でも見えるように白い縁取りを敷く
+  {
+    id: "gl-draw-line-casing",
+    type: "line",
+    filter: ["all", ["==", "$type", "LineString"], ["!=", "mode", "static"]],
+    layout: {
+      "line-cap": "round",
+      "line-join": "round",
+    },
+    paint: {
+      "line-color": "#fff",
+      "line-width": 7,
+      "line-opacity": 0.85,
+    },
+  },
   {
     id: "gl-draw-line-inactive",
     type: "line",
@@ -14,7 +29,7 @@ export const drawStyles = [
     },
     paint: {
       "line-color": "#e74230",
-      "line-width": 2,
+      "line-width": 4,
     },
   },
   {
@@ -27,14 +42,37 @@ export const drawStyles = [
     },
     paint: {
       "line-color": "#e74230",
-      "line-dasharray": [0.2, 2],
-      "line-width": 2,
+      "line-dasharray": [0.2, 1.6],
+      "line-width": 4,
+    },
+  },
+  // 頂点の追加用ハンドル（線を 2 回クリックした編集モードで出る）
+  {
+    id: "gl-draw-midpoint",
+    type: "circle",
+    filter: ["all", ["==", "$type", "Point"], ["==", "meta", "midpoint"]],
+    paint: {
+      "circle-radius": 4,
+      "circle-color": "#fff",
+      "circle-stroke-color": "#e74230",
+      "circle-stroke-width": 2,
+    },
+  },
+  // 頂点の移動用ハンドル。選択中は大きくする
+  {
+    id: "gl-draw-vertex",
+    type: "circle",
+    filter: ["all", ["==", "$type", "Point"], ["==", "meta", "vertex"]],
+    paint: {
+      "circle-radius": ["case", ["==", ["get", "active"], "true"], 8, 6],
+      "circle-color": "#e74230",
+      "circle-stroke-color": "#fff",
+      "circle-stroke-width": 2,
     },
   },
 ];
 
 export const getVerticeStyle = (withElevaition = true) => {
-  console.log("getVerticeStyle", withElevaition);
   const elevationLabelProps = withElevaition
     ? [
         " (EL.",
