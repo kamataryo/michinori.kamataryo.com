@@ -210,6 +210,13 @@ map.on("load", async () => {
     }
   });
 
+  // 線を選んだら（描き終えた直後も含む）、もう一度クリックさせずに頂点の編集に入る
+  map.on("draw.selectionchange", (e) => {
+    if (draw.getMode() === "simple_select" && e.features.length > 0) {
+      draw.changeMode("direct_select", { featureId: e.features[0].id });
+    }
+  });
+
   const onTrailDeleted = () => {
     setSymbols(false);
     clearGeometry();

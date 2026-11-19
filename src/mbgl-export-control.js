@@ -88,6 +88,10 @@ export default class ExportControl {
       }
 
       const copiedStyle = JSON.parse(JSON.stringify(map.getStyle()))
+      // 編集用のハンドルは画像に出さない
+      copiedStyle.layers = copiedStyle.layers.filter(
+        (layer) => !/^gl-draw-(vertex|midpoint)/.test(layer.id)
+      )
 
       const _map = new maplibregl.Map({
         container: _container,

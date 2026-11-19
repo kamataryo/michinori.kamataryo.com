@@ -46,7 +46,7 @@ export const drawStyles = [
       "line-width": 4,
     },
   },
-  // 頂点の追加用ハンドル（線を 2 回クリックした編集モードで出る）
+  // 頂点の追加用ハンドル（線をクリックした編集モードで出る）
   {
     id: "gl-draw-midpoint",
     type: "circle",
